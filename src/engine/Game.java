@@ -6,6 +6,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import exceptions.ChampionDisarmedException;
+import exceptions.InvalidTargetException;
+import exceptions.NotEnoughResourcesException;
+import exceptions.UnallowedMovementException;
 import model.abilities.Ability;
 import model.abilities.AreaOfEffect;
 import model.abilities.CrowdControlAbility;
@@ -24,7 +28,10 @@ import model.effects.SpeedUp;
 import model.effects.Stun;
 import model.world.AntiHero;
 import model.world.Champion;
+import model.world.Condition;
 import model.world.Cover;
+import model.world.Damageable;
+import model.world.Direction;
 import model.world.Hero;
 import model.world.Villain;
 
@@ -51,6 +58,138 @@ public class Game {
 		placeChampions();
 		placeCovers();
 	}
+	public Champion getCurrentChampion() {
+		Champion c = (Champion) turnOrder.remove();
+		turnOrder.insert(c);
+		return c;
+		
+	}
+	public Player checkGameOver() {
+		int player1 = 0;
+		int player2 = 0;
+		for (Champion c : firstPlayer.getTeam()) {
+			if(c.getCondition()==Condition.KNOCKEDOUT)
+				player1++;
+		}
+		for (Champion c : secondPlayer.getTeam()) {
+			if(c.getCondition()==Condition.KNOCKEDOUT)
+				player2++;
+		}
+		if(player1 == 3) return secondPlayer;
+		else if (player2 == 3)return firstPlayer;
+		else return null;
+	}
+	public void move(Direction d) throws NotEnoughResourcesException, UnallowedMovementException {
+		Champion c = getCurrentChampion();
+		if(c.getCurrentActionPoints()==0) throw new NotEnoughResourcesException();
+		
+		boolean root= false;
+		for(Effect effect :c.getAppliedEffects())
+			if(effect instanceof Root) root = true;
+		if(root==true) throw new UnallowedMovementException();
+		
+		if(d == Direction.LEFT && c.getLocation().y-1 >= 0) {
+			c.setLocation(new Point(c.getLocation().x , c.getLocation().y-1));
+		}else if(d == Direction.RIGHT && c.getLocation().y+1 <= 4) {
+			c.setLocation(new Point(c.getLocation().x , c.getLocation().y+1));
+		}else if(d == Direction.UP && c.getLocation().x+1 <= 4) {
+			c.setLocation(new Point(c.getLocation().x +1 , c.getLocation().y));
+		}else if(d == Direction.DOWN && c.getLocation().x-1 >= 0) {
+			c.setLocation(new Point(c.getLocation().x-1 , c.getLocation().y));
+		}else throw new UnallowedMovementException();
+		c.setCurrentActionPoints(c.getCurrentActionPoints()-1);
+		
+	}
+	public void attack(Direction d) throws NotEnoughResourcesException, UnallowedMovementException, ChampionDisarmedException, InvalidTargetException {
+		Champion c = getCurrentChampion();
+		if (c.getCurrentActionPoints()<2) throw new NotEnoughResourcesException();
+		
+		boolean disarm= false;
+		for(Effect effect :c.getAppliedEffects())
+			if(effect instanceof Disarm) disarm = true;
+		if(disarm==true) throw new ChampionDisarmedException();
+		
+		c.setCurrentActionPoints(c.getCurrentActionPoints()-1);
+		Damageable target =null;
+		int attackRange = c.getAttackRange();
+		
+		if(d == Direction.LEFT) {
+			
+			for (int i=c.getLocation().y-1 ; i>= 0 && attackRange>0 && target==null; i-- ) {
+				attackRange-- ;
+				target =(Damageable) board[c.getLocation().x][i];
+
+			}
+			
+		}else if(d == Direction.RIGHT) {
+			
+			for (int i=c.getLocation().y+1 ; i<= 4 && attackRange>0 && target==null; i++ ) {
+				attackRange-- ;
+				target =(Damageable) board[c.getLocation().x][i];
+
+			}
+			
+		}else if(d == Direction.UP) {
+
+			for (int i=c.getLocation().x+1 ; i<= 4 && attackRange>0 && target==null; i++ ) {
+				attackRange-- ;
+				target =(Damageable) board[i][c.getLocation().y];
+
+			}
+			
+		}else if(d == Direction.DOWN) {
+			
+			for (int i=c.getLocation().x-1 ; i>= 0 && attackRange>0 && target==null; i-- ) {
+				attackRange-- ;
+				target =(Damageable) board[i][c.getLocation().y];
+
+			}
+			
+		}
+		if(target == null) throw new InvalidTargetException();
+		
+		if (target instanceof Cover) 
+			target.setCurrentHP(target.getCurrentHP()-c.getAttackDamage());
+		else if (target instanceof Champion) {
+			Champion t = ((Champion)target);
+			boolean shield = false;
+			boolean dodged = false;
+			for(int i =0 ; i<t.getAppliedEffects().size();i++ ) {
+				Effect effect = t.getAppliedEffects().get(i);
+				if (effect instanceof Shield ) {
+					shield = true;
+					effect.remove(t);
+					t.getAppliedEffects().remove(i);
+					break;
+				}
+			}
+			for(int i =0 ; i<t.getAppliedEffects().size();i++ ) {
+				Effect effect = t.getAppliedEffects().get(i);
+				if (effect instanceof Dodge ) {
+					int chance =(int)( Math.random() * 2 + 1);
+					if(chance == 1) {
+						dodged = true;
+					}
+					break;
+				}
+			}
+			if(!shield && !dodged) {
+				int extraDamage =(int)( c.getAttackDamage()*1.5);
+				if((c instanceof Hero && t instanceof Villain )||(c instanceof Villain && t instanceof Hero))
+					target.setCurrentHP(target.getCurrentHP()-extraDamage);
+				else if ((c instanceof AntiHero && t instanceof Villain )||(c instanceof AntiHero && t instanceof Hero))
+					target.setCurrentHP(target.getCurrentHP()-extraDamage);
+				else 
+					target.setCurrentHP(target.getCurrentHP()-c.getAttackDamage());
+			}
+				
+			
+		}
+		
+		
+			
+	}
+	
 
 	public static void loadAbilities(String filePath) throws IOException {
 		BufferedReader br = new BufferedReader(new FileReader(filePath));
