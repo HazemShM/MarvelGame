@@ -1,5 +1,10 @@
 package model.abilities;
 
+import java.util.ArrayList;
+
+import model.world.Cover;
+import model.world.Damageable;
+
 public  class HealingAbility extends Ability {
 	private int healAmount;
 
@@ -16,23 +21,14 @@ public  class HealingAbility extends Ability {
 		this.healAmount = healAmount;
 	}
 
-public void execute(ArrayList<Damageable> targets) {
-		for(int i=0;i<targets.length;i++) {
-		Damageable x=targets[i];
-			if (instanceof x==Cover)
-			i++;
-		else {
-		 int NHp= x.getCurrentHp + this.getHealAmount();
-		 x.setCurrentHP(NHp);
-			
-		}
-			
-			
-			
-			
-		}
+	public void execute(ArrayList<Damageable> targets) {
+		for(int i=0 ; i<targets.size() ; i++) {
+			Damageable x= targets.get(i);
+			int NHp= x.getCurrentHP() + this.getHealAmount();
+			x.setCurrentHP(NHp);
 		
-		
+		}
+
 	}
 
 	
