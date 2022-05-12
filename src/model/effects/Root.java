@@ -24,8 +24,6 @@ public class Root extends Effect {
 	public void remove(Champion c) {
 		
 		
-
-		
 	}
 
 }

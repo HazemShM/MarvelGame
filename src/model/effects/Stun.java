@@ -19,8 +19,19 @@ public class Stun extends Effect {
 
 
 	public void remove(Champion c) {
+		int countStun = 0;
+		int countRoot = 0;
 		
-
+		for(Effect effect : c.getAppliedEffects())
+			if(effect instanceof Stun && this.getDuration() != effect.getDuration()) 
+				countStun++;
+			else if(effect instanceof Root) 
+				countRoot++;
+		
+		if(countStun==0)
+			if(countRoot==0) c.setCondition(Condition.ACTIVE);
+			else c.setCondition(Condition.ROOTED);
+			
 		
 	}
 
