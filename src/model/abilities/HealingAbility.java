@@ -16,7 +16,24 @@ public  class HealingAbility extends Ability {
 		this.healAmount = healAmount;
 	}
 
-	
+public void execute(ArrayList<Damageable> targets) {
+		for(int i=0;i<targets.length;i++) {
+		Damageable x=targets[i];
+			if (instanceof x==Cover)
+			i++;
+		else {
+		 int NHp= x.getCurrentHp + this.getHealAmount();
+		 x.setCurrentHP(NHp);
+			
+		}
+			
+			
+			
+			
+		}
+		
+		
+	}
 
 	
 
