@@ -87,18 +87,23 @@ public class Game {
 		for(Effect effect :c.getAppliedEffects())
 			if(effect instanceof Root) root = true;
 		if(root==true) throw new UnallowedMovementException();
-		
+		Point newLocation = null;
+				
 		if(d == Direction.LEFT && c.getLocation().y-1 >= 0) {
-			c.setLocation(new Point(c.getLocation().x , c.getLocation().y-1));
+			newLocation = new Point(c.getLocation().x , c.getLocation().y-1);
 		}else if(d == Direction.RIGHT && c.getLocation().y+1 <= 4) {
-			c.setLocation(new Point(c.getLocation().x , c.getLocation().y+1));
+			newLocation = new Point(c.getLocation().x , c.getLocation().y+1);
 		}else if(d == Direction.UP && c.getLocation().x+1 <= 4) {
-			c.setLocation(new Point(c.getLocation().x +1 , c.getLocation().y));
+			newLocation = new Point(c.getLocation().x +1 , c.getLocation().y);
 		}else if(d == Direction.DOWN && c.getLocation().x-1 >= 0) {
-			c.setLocation(new Point(c.getLocation().x-1 , c.getLocation().y));
-		}else throw new UnallowedMovementException();
-		c.setCurrentActionPoints(c.getCurrentActionPoints()-1);
-		
+			newLocation = new Point(c.getLocation().x-1 , c.getLocation().y);
+		}
+		if (newLocation == null || board[newLocation.x][newLocation.y] != null) 
+			throw new UnallowedMovementException();
+		else {
+			c.setCurrentActionPoints(c.getCurrentActionPoints()-1);
+			c.setLocation(newLocation);
+		}
 	}
 	public void attack(Direction d) throws NotEnoughResourcesException, UnallowedMovementException, ChampionDisarmedException, InvalidTargetException {
 		Champion c = getCurrentChampion();
@@ -134,6 +139,7 @@ public class Game {
 			for (int i=c.getLocation().x+1 ; i<= 4 && attackRange>0 && target==null; i++ ) {
 				attackRange-- ;
 				target =(Damageable) board[i][c.getLocation().y];
+				if(target!=null) break;
 
 			}
 			
@@ -142,7 +148,7 @@ public class Game {
 			for (int i=c.getLocation().x-1 ; i>= 0 && attackRange>0 && target==null; i-- ) {
 				attackRange-- ;
 				target =(Damageable) board[i][c.getLocation().y];
-
+				
 			}
 			
 		}
@@ -177,7 +183,9 @@ public class Game {
 				int extraDamage =(int)( c.getAttackDamage()*1.5);
 				if((c instanceof Hero && t instanceof Villain )||(c instanceof Villain && t instanceof Hero))
 					target.setCurrentHP(target.getCurrentHP()-extraDamage);
-				else if ((c instanceof AntiHero && t instanceof Villain )||(c instanceof AntiHero && t instanceof Hero))
+				else if((c instanceof Hero && t instanceof AntiHero )||(c instanceof AntiHero && t instanceof Hero))
+					target.setCurrentHP(target.getCurrentHP()-extraDamage);
+				else if ((c instanceof AntiHero && t instanceof Villain )||(c instanceof Villain && t instanceof AntiHero))
 					target.setCurrentHP(target.getCurrentHP()-extraDamage);
 				else 
 					target.setCurrentHP(target.getCurrentHP()-c.getAttackDamage());

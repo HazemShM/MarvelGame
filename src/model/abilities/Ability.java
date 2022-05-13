@@ -22,7 +22,9 @@ public abstract class Ability {
 		this.castArea = area;
 		this.requiredActionPoints = required;
 	}
+	
 	public abstract void execute(ArrayList<Damageable> targets);
+	
 	public int getCurrentCooldown() {
 		return currentCooldown;
 	}
