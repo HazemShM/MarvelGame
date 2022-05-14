@@ -23,15 +23,15 @@ public class Stun extends Effect {
 		int countRoot = 0;
 		
 		for(Effect effect : c.getAppliedEffects())
-			if(effect instanceof Stun && this.getDuration() != effect.getDuration()) 
+			if(effect instanceof Stun && !this.equals(effect)) 
 				countStun++;
 			else if(effect instanceof Root) 
 				countRoot++;
 		
-		if(countStun==0)
+		if(countStun==0) {
 			if(countRoot==0) c.setCondition(Condition.ACTIVE);
 			else c.setCondition(Condition.ROOTED);
-			
+		}
 		
 	}
 
