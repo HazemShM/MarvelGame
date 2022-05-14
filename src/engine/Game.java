@@ -321,55 +321,46 @@ public class Game {
 		else secondLeaderAbilityUsed = true;
 		
 	}
+	public void updateEffectsAndAbilities(Champion c) {
+		for(Effect effect :  c.getAppliedEffects()) {
+			if(effect.getDuration()==0) {
+				effect.remove(c);
+				c.getAppliedEffects().remove(effect);
+			}else {
+				effect.setDuration(effect.getDuration()-1);
+			}
+			
+		}
+		for(Ability ability : c.getAbilities()) {
+			if(ability.getCurrentCooldown()!=0)
+				ability.setCurrentCooldown(ability.getCurrentCooldown()-1);
+		}
+	}
 	public void endTurn() {
 		turnOrder.remove();
 		if(turnOrder.isEmpty()) {
 			prepareChampionTurns();
-			
 		}
 		Champion c = getCurrentChampion();
 		boolean stunned =false;
 		while( c.getCondition()==Condition.INACTIVE) {
-			stunned = false;
-			for(Effect effect :  c.getAppliedEffects()) {
-				if (effect instanceof Stun) stunned = true;
-				if(effect.getDuration()==0) {
-					effect.remove( c);
-					c.getAppliedEffects().remove(effect);
-				}else {
-					effect.setDuration(effect.getDuration()-1);
-				}
-				
-			}
-			for(Ability ability : c.getAbilities()) {
-				if(ability.getCurrentCooldown()==0)
-					ability.setCurrentCooldown(ability.getBaseCooldown());
-				else ability.setCurrentCooldown(ability.getCurrentCooldown()-1);
-			}
-			if(c.getCondition() == Condition.INACTIVE)
-				turnOrder.remove();
 			c = getCurrentChampion();
+			stunned = true;
+			updateEffectsAndAbilities(c);
+			c.setCurrentActionPoints(c.getMaxActionPointsPerTurn());
+			if(c.getCondition() == Condition.INACTIVE) {
+				turnOrder.remove();
+				stunned=false;
+			}
+			
+				
+			
 			
 		}
 		if (!stunned) {
-			for(Effect effect :  c.getAppliedEffects()) {
-				if(effect.getDuration()==0) {
-					effect.remove( getCurrentChampion());
-					c.getAppliedEffects().remove(effect);
-				}else {
-					effect.setDuration(effect.getDuration()-1);
-				}
-				
-			}
+			updateEffectsAndAbilities(c);
 			c.setCurrentActionPoints(c.getMaxActionPointsPerTurn());
-			for(Ability ability : c.getAbilities()) {
-				if(ability.getCurrentCooldown()==0)
-					ability.setCurrentCooldown(ability.getBaseCooldown());
-				else ability.setCurrentCooldown(ability.getCurrentCooldown()-1);
-			}
 		}
-		
-		
 		
 		
 	}
@@ -387,7 +378,12 @@ public class Game {
 		}
 		
 	}
-	
+	public void castAbility(Ability a) {
+		
+	}
+	public void castAbility(Ability a, Direction d) {
+		
+	}
 	public void castAbility(Ability a, int x, int y) throws AbilityUseException, NotEnoughResourcesException, InvalidTargetException, CloneNotSupportedException {
 		
 		Champion c = getCurrentChampion();
