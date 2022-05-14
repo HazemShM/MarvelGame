@@ -42,7 +42,7 @@ public abstract class Champion implements Damageable , Comparable{
 		Champion c = (Champion) o;
 		if (this.getSpeed() == c.getSpeed())
 			return this.getName().compareTo(c.getName());
-		return this.getSpeed()-c.getSpeed();
+		return c.getSpeed()-this.getSpeed();
 	}
 	
 	public abstract void useLeaderAbility(ArrayList<Champion> targets);
