@@ -23,10 +23,11 @@ public class CrowdControlAbility extends Ability {
 		
 		for(int i=0;i<targets.size();i++) {
 			Champion x=(Champion)targets.get(i);
-			this.effect.apply(x);
+			
 	
 			Effect R=(Effect) this.effect.clone();
 			x.getAppliedEffects().add(R);
+			R.apply(x);
 			
 			
 		}
