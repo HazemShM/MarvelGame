@@ -293,180 +293,16 @@ public class Game {
 		else if(a.getCastArea()==AreaOfEffect.TEAMTARGET) {
 		      
 			 if(a instanceof DamagingAbility) {
-				 
-				 
-				 
-				
-				
-				
-				
-				
-				
+				 		
 			}
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
+	
 		}
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-		
+					
 		}
 		
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-public void castAbility(Ability a, int x, int y) throws AbilityUseException, NotEnoughResourcesException, InvalidTargetException, CloneNotSupportedException {
-		
-		Champion c = getCurrentChampion();
-		
-		int actionPoints = c.getCurrentActionPoints()-a.getRequiredActionPoints();
-		int mana = c.getMana()-a.getManaCost();
-		if(actionPoints<0 || mana<0)
-			throw new NotEnoughResourcesException();
-		
-		boolean silence = false;
-		
-		for (Effect effect : c.getAppliedEffects()) {
-			if(effect instanceof Silence)
-				silence = true;
-		}
-		if(silence) throw new AbilityUseException();
-		if(a.getCurrentCooldown()!=0) throw new AbilityUseException();
-		
-		c.setCurrentActionPoints(actionPoints);
-		c.setMana(mana);
-		a.setCurrentCooldown(a.getBaseCooldown());
-		
-		Damageable target = (Damageable) board[x][y];
-		int distance = Math.abs(x-c.getLocation().x) + Math.abs(y-c.getLocation().y);
-		if (distance > a.getCastRange() || target==null) 
-			throw new InvalidTargetException();
-		ArrayList<Damageable> targets = new ArrayList<>();
-		targets.add(target);
-		if(target instanceof Cover && a instanceof DamagingAbility) {
 			
-			a.execute(targets);
-			if(target.getCurrentHP()==0)
-				board[target.getLocation().x][target.getLocation().y]=null;
-			return;
-		}
-		Champion t = (Champion) target;
-		boolean friend = friend(c, t);
-		if(a instanceof DamagingAbility) {
-			
-			
-			if(friend) throw new InvalidTargetException();
-			
-			boolean shield = false;
-			for (Effect effect :t.getAppliedEffects()) {
-				if(effect instanceof Shield) {
-					shield =true;
-					effect.remove(t);
-					t.getAppliedEffects().remove(effect);
-					break;
-				}
-			}
-			if(!shield) {
-				a.execute(targets);
-				if(target.getCurrentHP()==0)
-					removeFromTurnOrderAndBoard((Champion)target);
-				
-			}
-			
-		}else if (a instanceof HealingAbility) {
-			if(friend) {
-				a.execute(targets);
-			}else {
-				throw new InvalidTargetException();
-			}
-		}
-		else if (a instanceof CrowdControlAbility) {
-			if(((CrowdControlAbility) a).getEffect().getType() == EffectType.BUFF && friend)
-				a.execute(targets);
-			else if (((CrowdControlAbility) a).getEffect().getType() == EffectType.DEBUFF && !friend) 
-				a.execute(targets);
-			else 
-				throw new InvalidTargetException();
-			
-		}
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+		
 	public void move(Direction d) throws NotEnoughResourcesException, UnallowedMovementException {
 		Champion c = getCurrentChampion();
 		if(c.getCurrentActionPoints()==0) throw new NotEnoughResourcesException();
@@ -594,7 +430,7 @@ public void castAbility(Ability a, int x, int y) throws AbilityUseException, Not
 					target.setCurrentHP(target.getCurrentHP()-c.getAttackDamage());
 			}
 			if(target.getCurrentHP()==0) {
-				t.setCondition(Condition.KNOCKEDOUT);
+				
 				removeFromTurnOrderAndBoard(t);
 			}
 			
@@ -617,6 +453,19 @@ public void castAbility(Ability a, int x, int y) throws AbilityUseException, Not
 		board[c.getLocation().x][c.getLocation().y] = null;
 		
 	}
+	public void removeFromTeam (Champion c) {
+		for (Champion champ : firstPlayer.getTeam()) {
+			if (champ.equals(c)) {
+				firstPlayer.getTeam().remove(c);
+			}
+		}
+		for (Champion champ : secondPlayer.getTeam()) {
+			if (champ.equals(c)) {
+				secondPlayer.getTeam().remove(c);
+			}
+		}
+	}
+	
 	public boolean friend(Champion attacker , Champion target) {
 		
 		boolean attackerTeam =false;
@@ -679,7 +528,7 @@ public void castAbility(Ability a, int x, int y) throws AbilityUseException, Not
 			c.useLeaderAbility(targets);
 			for(Champion target : targets) {
 				if(target.getCondition() == Condition.KNOCKEDOUT) {
-					board[target.getLocation().x][target.getLocation().y] = null;
+					removeFromTurnOrderAndBoard(target);
 					
 				}
 			}
@@ -701,54 +550,48 @@ public void castAbility(Ability a, int x, int y) throws AbilityUseException, Not
 		else secondLeaderAbilityUsed = true;
 		
 	}
+	
+	public void updateEffectsAndAbilities(Champion c) {
+		
+		for(int i = 0 ; i<c.getAppliedEffects().size();i++) {
+			Effect effect =  c.getAppliedEffects().get(i);
+			if(effect.getDuration()==1) {
+				effect.remove(c);
+				c.getAppliedEffects().remove(i);
+				i--;
+			}else {
+				effect.setDuration(effect.getDuration()-1);
+			}
+			
+		}
+		for(Ability ability : c.getAbilities()) {
+			if(ability.getCurrentCooldown()!=0)
+				ability.setCurrentCooldown(ability.getCurrentCooldown()-1);
+		}
+	}
+	
 	public void endTurn() {
+	
 		turnOrder.remove();
+		
 		if(turnOrder.isEmpty()) {
 			prepareChampionTurns();
-			
-		}
-		Champion c = getCurrentChampion();
-		boolean stunned =false;
-		while( c.getCondition()==Condition.INACTIVE) {
-			stunned = false;
-			for(Effect effect :  c.getAppliedEffects()) {
-				if (effect instanceof Stun) stunned = true;
-				if(effect.getDuration()==0) {
-					effect.remove( c);
-					c.getAppliedEffects().remove(effect);
-				}else {
-					effect.setDuration(effect.getDuration()-1);
-				}
-				
-			}
-			for(Ability ability : c.getAbilities()) {
-				if(ability.getCurrentCooldown()==0)
-					ability.setCurrentCooldown(ability.getBaseCooldown());
-				else ability.setCurrentCooldown(ability.getCurrentCooldown()-1);
-			}
-			if(c.getCondition() == Condition.INACTIVE)
-				turnOrder.remove();
-			c = getCurrentChampion();
-			
-		}
-		if (!stunned) {
-			for(Effect effect :  c.getAppliedEffects()) {
-				if(effect.getDuration()==0) {
-					effect.remove( getCurrentChampion());
-					c.getAppliedEffects().remove(effect);
-				}else {
-					effect.setDuration(effect.getDuration()-1);
-				}
-				
-			}
-			c.setCurrentActionPoints(c.getMaxActionPointsPerTurn());
-			for(Ability ability : c.getAbilities()) {
-				if(ability.getCurrentCooldown()==0)
-					ability.setCurrentCooldown(ability.getBaseCooldown());
-				else ability.setCurrentCooldown(ability.getCurrentCooldown()-1);
-			}
 		}
 		
+		Champion c = getCurrentChampion();
+		
+		while(!turnOrder.isEmpty() && c.getCondition()==Condition.INACTIVE) {
+			
+			
+			updateEffectsAndAbilities(c);
+			c.setCurrentActionPoints(c.getMaxActionPointsPerTurn());
+			turnOrder.remove();
+			
+			c = getCurrentChampion();
+		}
+		
+		updateEffectsAndAbilities(c);
+		c.setCurrentActionPoints(c.getMaxActionPointsPerTurn());
 		
 		
 		
@@ -767,8 +610,116 @@ public void castAbility(Ability a, int x, int y) throws AbilityUseException, Not
 		}
 		
 	}
-	
-	
+
+	public boolean checkShield(Champion t) {
+		boolean shield = false;
+		int shieldDuration = 0;
+		
+		for (Effect effect :t.getAppliedEffects()) {
+			if(effect instanceof Shield) {
+				shieldDuration=Math.min(effect.getDuration(), shieldDuration);
+				shield =true;
+			}
+		}
+		if(shield) {
+			for (Effect effect :t.getAppliedEffects()) {
+				if(effect instanceof Shield && effect.getDuration()==shieldDuration ) {
+					effect.remove(t);
+					t.getAppliedEffects().remove(effect);
+					break;
+				}
+			}
+		}
+		return shield;
+	}
+
+		
+
+	public void castAbility(Ability a, Direction d) {
+		
+	}
+	public void castAbility(Ability a, int x, int y) throws AbilityUseException, NotEnoughResourcesException, InvalidTargetException, CloneNotSupportedException {
+		
+		Champion c = getCurrentChampion();
+		
+		int actionPoints = c.getCurrentActionPoints()-a.getRequiredActionPoints();
+		int mana = c.getMana()-a.getManaCost();
+		
+		if(actionPoints<0 || mana<0)
+			throw new NotEnoughResourcesException();
+		
+		if(a.getCurrentCooldown()!=0) throw new AbilityUseException();
+		
+		boolean silence = false;
+		
+		for (Effect effect : c.getAppliedEffects()) {
+			if(effect instanceof Silence)
+				silence = true;
+		}
+		
+		if(silence) throw new AbilityUseException();		
+		if(c.getLocation().x==x && c.getLocation().y==y) throw new InvalidTargetException();
+		
+		c.setCurrentActionPoints(actionPoints);
+		c.setMana(mana);
+		a.setCurrentCooldown(a.getBaseCooldown());
+		
+		Damageable target = (Damageable) board[x][y];
+		
+		int distance = Math.abs(x-c.getLocation().x) + Math.abs(y-c.getLocation().y);
+		
+		if(target==null) throw new InvalidTargetException();
+		
+		if (distance > a.getCastRange() ) 
+			throw new AbilityUseException();
+		
+		ArrayList<Damageable> targets = new ArrayList<>();
+		targets.add(target);
+		
+		if(target instanceof Cover && a instanceof DamagingAbility) {
+			
+			a.execute(targets);
+			if(target.getCurrentHP()==0)
+				board[target.getLocation().x][target.getLocation().y]=null;
+			return;
+		}
+		
+		if(target instanceof Cover && !(a instanceof DamagingAbility)) {
+			throw new InvalidTargetException();
+		}
+		
+		Champion t = (Champion) target;
+		boolean friend = friend(c, t);
+		
+		if(a instanceof DamagingAbility) {
+			
+			boolean shield = checkShield(t);
+			
+			if(!shield) {
+				
+				a.execute(targets);
+				if(target.getCurrentHP()==0) {
+					removeFromTurnOrderAndBoard((Champion) target);
+					removeFromTeam((Champion) target);
+				}
+			}
+		}else if (a instanceof HealingAbility) {
+			
+			if(friend) {
+				a.execute(targets);
+			}
+		}else if (a instanceof CrowdControlAbility) {
+			
+			if(((CrowdControlAbility) a).getEffect().getType() == EffectType.BUFF && friend)
+				a.execute(targets);
+			else if (((CrowdControlAbility) a).getEffect().getType() == EffectType.DEBUFF && !friend) 
+				a.execute(targets);
+			
+			
+		}
+		
+	}
+
 	public static void loadAbilities(String filePath) throws IOException {
 		BufferedReader br = new BufferedReader(new FileReader(filePath));
 		String line = br.readLine();
