@@ -12,8 +12,7 @@ public class PowerUp extends Effect {
 		super("PowerUp", duration, EffectType.BUFF);
 		
 	}
-
-
+	
 	public void apply(Champion c) {
 		
 		for(Ability ability : c.getAbilities()) {

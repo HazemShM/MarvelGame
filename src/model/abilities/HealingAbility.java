@@ -22,11 +22,9 @@ public  class HealingAbility extends Ability {
 	}
 
 	public void execute(ArrayList<Damageable> targets) {
-		for(int i=0 ; i<targets.size() ; i++) {
-			Damageable x= targets.get(i);
+		for(Damageable x : targets) {
 			int NHp= x.getCurrentHP() + this.getHealAmount();
 			x.setCurrentHP(NHp);
-		
 		}
 
 	}

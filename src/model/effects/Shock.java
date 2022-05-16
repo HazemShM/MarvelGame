@@ -23,8 +23,7 @@ public class Shock extends Effect {
 		
 		
 	}
-
-
+	
 	public void remove(Champion c) {
 		
 		int oldSpeed = (int) (c.getSpeed()/0.9 );

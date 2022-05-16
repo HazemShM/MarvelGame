@@ -9,7 +9,7 @@ public class Embrace extends Effect {
 		super("Embrace", duration, EffectType.BUFF);
 	}
 
-
+	
 	public void apply(Champion c) {
 		
 		int newHp =(int) (c.getMaxHP() * 0.2 + c.getCurrentHP());

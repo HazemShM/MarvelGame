@@ -20,7 +20,7 @@ public class Root extends Effect {
 		
 		
 	}
-
+	
 	public void remove(Champion c) {
 		
 		if (c.getCondition()!= Condition.INACTIVE) {

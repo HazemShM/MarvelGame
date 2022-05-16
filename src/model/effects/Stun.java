@@ -17,7 +17,7 @@ public class Stun extends Effect {
 		
 	}
 
-
+	
 	public void remove(Champion c) {
 		int countStun = 0;
 		int countRoot = 0;

@@ -20,7 +20,6 @@ public class SpeedUp extends Effect{
 		
 	}
 
-
 	public void remove(Champion c) {
 		
 		int oldSpeed = (int) (c.getSpeed()/1.15 );
