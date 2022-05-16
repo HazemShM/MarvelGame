@@ -12,7 +12,6 @@ public class Disarm extends Effect {
 		super("Disarm", duration, EffectType.DEBUFF);
 		
 	}
-
 	
 	public void apply(Champion c) {
 		

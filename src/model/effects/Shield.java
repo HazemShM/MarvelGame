@@ -17,7 +17,7 @@ public class Shield extends Effect {
 		
 		
 	}
-
+	
 
 	public void remove(Champion c) {
 		
