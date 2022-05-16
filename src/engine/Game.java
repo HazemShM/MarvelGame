@@ -468,8 +468,7 @@ public class Game {
 				else if(d==Direction.UP) x++;
 				else x--;
 			}
-			if(!targets.isEmpty())
-				a.execute(targets);
+			a.execute(targets);
 			
 			for(Damageable target : targets) {
 				if(target.getCurrentHP()==0) {
@@ -657,7 +656,7 @@ public class Game {
 		
 		
 		c.setCurrentActionPoints(mypoints);
-		c.setMana(mana);
+		
 		a.setCurrentCooldown(a.getBaseCooldown());
 		
 		if(a.getCastArea()==AreaOfEffect.SURROUND) {
@@ -678,8 +677,9 @@ public class Game {
 								targets.add(target);
 					}	
 				}
-				if(targets.isEmpty()) return;
+				
 				a.execute(targets);
+				
 				for (Damageable target : targets) {
 					if(target instanceof Cover && target.getCurrentHP()==0)
 						board[target.getLocation().x][target.getLocation().y]=null;
@@ -699,7 +699,7 @@ public class Game {
 						if(friend) targets.add(target);
 					}
 				}
-				if(targets.isEmpty()) return;
+				
 				a.execute(targets);					
 			}else if (a instanceof CrowdControlAbility)	{
 				ArrayList<Damageable> targets = new ArrayList<>();		
@@ -714,7 +714,7 @@ public class Game {
 					}
 					
 				}
-				if(targets.isEmpty()) return;
+				
 				a.execute(targets);	
 			}
 		
@@ -729,7 +729,7 @@ public class Game {
 				
 				a.execute(targets);
 			else throw new InvalidTargetException();	
-		
+			
 		}else if(a.getCastArea()==AreaOfEffect.TEAMTARGET) {
 			
 			ArrayList<Champion> team1 = firstPlayer.getTeam();
@@ -751,7 +751,7 @@ public class Game {
 							targets.add((Damageable)team2.get(i));
 					}
 				}	
-				if(targets.isEmpty()) return;
+				
 				a.execute(targets);	
 				
 				for (Damageable target : targets) 
@@ -773,7 +773,7 @@ public class Game {
 							targets.add((Damageable)team2.get(i));
 					}
 				}
-				if(targets.isEmpty()) return;
+				
 				a.execute(targets);	
 			}else if(a instanceof CrowdControlAbility) {
 				boolean friend1=friend(c,team1.get(0));
@@ -793,11 +793,12 @@ public class Game {
 					if (distance <= a.getCastRange() )
 						targets.add(teama.get(i));	
 				}
-				if(targets.isEmpty()) return;
+				
 				a.execute(targets);
 			}		
 				
-		}						
+		}	
+		c.setMana(c.getMana()-a.getManaCost());
 	}
 	public static void loadAbilities(String filePath) throws IOException {
 		BufferedReader br = new BufferedReader(new FileReader(filePath));
