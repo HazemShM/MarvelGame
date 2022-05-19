@@ -25,7 +25,8 @@ public class DamagingAbility extends Ability {
 		for(Damageable x : targets) {
 			int NHp = x.getCurrentHP() - this.getDamageAmount();
 			x.setCurrentHP(NHp);
-			if (x instanceof Champion && x.getCurrentHP()==0) ((Champion) x).setCondition(Condition.KNOCKEDOUT);
+			if (x instanceof Champion && x.getCurrentHP()==0) 
+				((Champion) x).setCondition(Condition.KNOCKEDOUT);
 		}
 		
 	}

@@ -17,6 +17,7 @@ public class Villain extends Champion {
 		
 		for (Champion c : targets) {
 			c.setCondition(Condition.KNOCKEDOUT);
+			c.setCurrentHP(0);
 
 		}
 		

@@ -19,8 +19,8 @@ public class Hero extends Champion {
 			for(int i =0 ;i<c.getAppliedEffects().size(); i++) {
 				Effect effect = c.getAppliedEffects().get(i);
 				if(effect.getType()==EffectType.DEBUFF) {
-					effect.remove(c);
 					c.getAppliedEffects().remove(i);
+					effect.remove(c);
 					i--;
 				}
 			}
