@@ -16,8 +16,8 @@ public class Shock extends Effect {
 		c.setSpeed(newSpeed);
 		int newAttackDamage = (int)(c.getAttackDamage()*0.9);
 		c.setAttackDamage(newAttackDamage);
-		
-		c.setMaxActionPointsPerTurn(c.getMaxActionPointsPerTurn()-1);
+		if(c.getMaxActionPointsPerTurn()!=0)
+			c.setMaxActionPointsPerTurn(c.getMaxActionPointsPerTurn()-1);
 		c.setCurrentActionPoints(c.getCurrentActionPoints()-1);
 		
 		

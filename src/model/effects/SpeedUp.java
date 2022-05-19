@@ -24,7 +24,8 @@ public class SpeedUp extends Effect{
 		
 		int oldSpeed = (int) (c.getSpeed()/1.15 );
 		c.setSpeed(oldSpeed);
-		c.setMaxActionPointsPerTurn(c.getMaxActionPointsPerTurn()-1);
+		if(c.getMaxActionPointsPerTurn()!=0)
+			c.setMaxActionPointsPerTurn(c.getMaxActionPointsPerTurn()-1);
 		c.setCurrentActionPoints(c.getCurrentActionPoints()-1);
 		
 		

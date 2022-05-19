@@ -12,7 +12,7 @@ public class AntiHero extends Champion{
 	}
 
 	public void useLeaderAbility(ArrayList<Champion> targets) {
-		
+
 		for(Champion c : targets) {
 			Effect stun = new Stun(2);
 			stun.apply(c);
