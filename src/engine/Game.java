@@ -67,6 +67,8 @@ public class Game {
 
 	public void move(Direction d) throws NotEnoughResourcesException, UnallowedMovementException {
 		Champion c = getCurrentChampion();
+		if (c==null) return;
+		
 		if (c.getCurrentActionPoints() == 0)
 			throw new NotEnoughResourcesException();
 
@@ -105,6 +107,7 @@ public class Game {
 	public void attack(Direction d) throws NotEnoughResourcesException, UnallowedMovementException,
 			ChampionDisarmedException, InvalidTargetException {
 		Champion c = getCurrentChampion();
+		if (c==null) return;
 		if (c.getCurrentActionPoints() < 2)
 			throw new NotEnoughResourcesException();
 
@@ -253,6 +256,7 @@ public class Game {
 	public void useLeaderAbility() throws LeaderNotCurrentException, LeaderAbilityAlreadyUsedException,
 			AbilityUseException, InvalidTargetException {
 		Champion c = getCurrentChampion();
+		if (c==null) return;
 		boolean firstPlayerTeam = false;
 		boolean secondPlayerTeam = false;
 
@@ -319,7 +323,8 @@ public class Game {
 	}
 
 	public void updateEffectsAndAbilities(Champion c) {
-
+		if (c==null) return;
+		
 		for (int i = 0; i < c.getAppliedEffects().size(); i++) {
 			Effect effect = c.getAppliedEffects().get(i);
 			if (effect.getDuration() == 1) {
@@ -383,7 +388,7 @@ public class Game {
 			InvalidTargetException, CloneNotSupportedException {
 
 		Champion c = getCurrentChampion();
-
+		if (c==null) return;
 		int actionPoints = c.getCurrentActionPoints() - a.getRequiredActionPoints();
 		int mana = c.getMana() - a.getManaCost();
 
@@ -515,7 +520,7 @@ public class Game {
 			InvalidTargetException, CloneNotSupportedException {
 
 		Champion c = getCurrentChampion();
-
+		if (c==null) return;
 		int actionPoints = c.getCurrentActionPoints() - a.getRequiredActionPoints();
 		int mana = c.getMana() - a.getManaCost();
 
@@ -642,6 +647,8 @@ public class Game {
 	public void castAbility(Ability a) throws AbilityUseException, NotEnoughResourcesException, InvalidTargetException,CloneNotSupportedException {
 
 		Champion c = getCurrentChampion();
+		if (c==null) return;
+		
 		int mana = c.getMana() - a.getManaCost();
 		int mypoints = c.getCurrentActionPoints() - a.getRequiredActionPoints();
 
