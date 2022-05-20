@@ -195,14 +195,22 @@ public class Game {
 	}
 
 	public boolean checkShield(Champion t) {
+		int min = Integer.MAX_VALUE;
 		boolean shield = false;
-		for (int i = 0; i < t.getAppliedEffects().size(); i++) {
-			Effect effect = t.getAppliedEffects().get(i);
-			if (effect instanceof Shield) {
+		
+		for(Effect effect: t.getAppliedEffects()) {
+			if(effect instanceof Shield) {
+				min = Math.min(min, effect.getDuration());
 				shield = true;
-				t.getAppliedEffects().remove(i);
-				effect.remove(t);
-				break;
+			}
+		}
+		if(shield) {
+			for (Effect effect : t.getAppliedEffects()) {
+				if (effect instanceof Shield && effect.getDuration()==min) {
+					t.getAppliedEffects().remove(effect);
+					effect.remove(t);
+					break;
+				}
 			}
 		}
 		return shield;
@@ -527,7 +535,7 @@ public class Game {
 		if (c.getLocation().x == x && c.getLocation().y == y && a instanceof CrowdControlAbility
 				&& ((CrowdControlAbility) a).getEffect().getType() == EffectType.DEBUFF)
 			throw new InvalidTargetException();
-
+	
 		Damageable target = (Damageable) board[x][y];
 
 		int distance = Math.abs(x - c.getLocation().x) + Math.abs(y - c.getLocation().y);
@@ -546,51 +554,51 @@ public class Game {
 			a.execute(targets);
 			if (target.getCurrentHP() == 0)
 				board[target.getLocation().x][target.getLocation().y] = null;
-			return;
+			
 		}
-
 		if (target instanceof Cover && !(a instanceof DamagingAbility)) {
 			throw new InvalidTargetException();
 		}
+		if(target instanceof Champion) {
+			Champion t = (Champion) target;
+			boolean friend = friend(c, t);
 
-		Champion t = (Champion) target;
-		boolean friend = friend(c, t);
+			if (a instanceof DamagingAbility) {
 
-		if (a instanceof DamagingAbility) {
+				if (!friend) {
+					boolean shield = checkShield(t);
 
-			if (!friend) {
-				boolean shield = checkShield(t);
+					if (!shield) {
 
-				if (!shield) {
-
-					a.execute(targets);
-					if (target.getCurrentHP() == 0) {
-						removeFromTurnOrderAndBoard((Champion) target);
-						removeFromTeam((Champion) target);
+						a.execute(targets);
+						if (target.getCurrentHP() == 0) {
+							removeFromTurnOrderAndBoard((Champion) target);
+							removeFromTeam((Champion) target);
+						}
 					}
+				} else {
+					throw new InvalidTargetException();
 				}
-			} else {
-				throw new InvalidTargetException();
-			}
-		} else if (a instanceof HealingAbility) {
+			} else if (a instanceof HealingAbility) {
 
-			if (friend) {
-				a.execute(targets);
-			} else {
-				throw new InvalidTargetException();
-			}
-		} else if (a instanceof CrowdControlAbility) {
+				if (friend) {
+					a.execute(targets);
+				} else {
+					throw new InvalidTargetException();
+				}
+			} else if (a instanceof CrowdControlAbility) {
 
-			if (((CrowdControlAbility) a).getEffect().getType() == EffectType.BUFF && friend)
-				a.execute(targets);
-			else if (((CrowdControlAbility) a).getEffect().getType() == EffectType.DEBUFF && !friend)
-				a.execute(targets);
-			else
-				throw new InvalidTargetException();
+				if (((CrowdControlAbility) a).getEffect().getType() == EffectType.BUFF && friend)
+					a.execute(targets);
+				else if (((CrowdControlAbility) a).getEffect().getType() == EffectType.DEBUFF && !friend)
+					a.execute(targets);
+				else
+					throw new InvalidTargetException();
+			}
 		}
 		c.setCurrentActionPoints(c.getCurrentActionPoints() - a.getRequiredActionPoints());
-		c.setMana(c.getMana() - a.getManaCost());
 		a.setCurrentCooldown(a.getBaseCooldown());
+		c.setMana(c.getMana() - a.getManaCost());
 
 	}
 
@@ -647,7 +655,9 @@ public class Game {
 			if (effect instanceof Silence)
 				throw new AbilityUseException();
 		}
-
+		a.setCurrentCooldown(a.getBaseCooldown());
+		c.setCurrentActionPoints( c.getCurrentActionPoints() - a.getRequiredActionPoints());
+		
 		ArrayList<Damageable> targets = new ArrayList<>();
 
 		if (a.getCastArea() == AreaOfEffect.SURROUND) {
@@ -710,8 +720,6 @@ public class Game {
 				a.execute(targets);
 			else if (a instanceof CrowdControlAbility && ((CrowdControlAbility) a).getEffect().getType() == EffectType.BUFF)
 				a.execute(targets);
-			else
-				throw new InvalidTargetException();
 
 		}else if (a.getCastArea() == AreaOfEffect.TEAMTARGET) {
 
@@ -783,9 +791,8 @@ public class Game {
 			}
 
 		}
-		a.setCurrentCooldown(a.getBaseCooldown());
+		
 		c.setMana(c.getMana() - a.getManaCost());
-		c.setCurrentActionPoints( c.getCurrentActionPoints() - a.getRequiredActionPoints());
 	}
 
 	public static void loadAbilities(String filePath) throws IOException {

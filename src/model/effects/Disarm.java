@@ -14,27 +14,38 @@ public class Disarm extends Effect {
 	}
 	
 	public void apply(Champion c) {
-		
-		Ability newAbility = new DamagingAbility("Punch",0,1,1,AreaOfEffect.SINGLETARGET,1,50);
-		c.getAbilities().add(newAbility);
-		
-		
-		
+		boolean punsh = false;
+		for (Ability ability : c.getAbilities()) {
+			if(ability.getName().equals("Punsh")) {
+				punsh = true;
+			}
+				
+		}
+		if(!punsh) {
+			Ability newAbility = new DamagingAbility("Punch",0,1,1,AreaOfEffect.SINGLETARGET,1,50);
+			c.getAbilities().add(newAbility);
+			
+		}
 		
 	}
 
 	
 	public void remove(Champion c) {
-		
-		for (Ability ability : c.getAbilities()) {
-			
-			if(ability.getName().equals("Punch") ) {
-				c.getAbilities().remove(ability);
-				break;
-			}		
+		boolean punsh = false;
+		for (Effect effect : c.getAppliedEffects()) {
+			if(effect instanceof Disarm) {
+				punsh = true;
+			}
+				
 		}
-		
-		
+		if(!punsh) {
+			for (Ability ability : c.getAbilities()) {
+				if(ability.getName().equals("Punch") ) {
+					c.getAbilities().remove(ability);
+					break;
+				}		
+			}
+		}
 		
 	}
 	
