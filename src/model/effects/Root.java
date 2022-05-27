@@ -10,7 +10,7 @@ public class Root extends Effect {
 		
 	}
 
-
+	@Override
 	public void apply(Champion c) {
 		
 		if(c.getCondition() != Condition.INACTIVE)
@@ -20,7 +20,7 @@ public class Root extends Effect {
 		
 		
 	}
-	
+	@Override
 	public void remove(Champion c) {
 		
 		if (c.getCondition()!= Condition.INACTIVE) {

@@ -70,10 +70,10 @@ public class Game {
 		if (c==null) return;
 		
 		if (c.getCurrentActionPoints() == 0)
-			throw new NotEnoughResourcesException();
+			throw new NotEnoughResourcesException("You need at least one action point to move");
 
 		if (c.getCondition() == Condition.ROOTED)
-			throw new UnallowedMovementException();
+			throw new UnallowedMovementException("You can not move while being rooted");
 		Point newLocation = null;
 
 		if (d == Direction.LEFT && c.getLocation().y - 1 >= 0) {
@@ -93,8 +93,10 @@ public class Game {
 			newLocation = new Point(c.getLocation().x - 1, c.getLocation().y);
 
 		}
-		if (newLocation == null || getBoard()[newLocation.x][newLocation.y] != null)
-			throw new UnallowedMovementException();
+		if (newLocation == null )
+			throw new UnallowedMovementException("Can not move out of the board");
+		else if (getBoard()[newLocation.x][newLocation.y] != null)
+			throw new UnallowedMovementException("target cell is not empty");
 		else {
 			c.setCurrentActionPoints(c.getCurrentActionPoints() - 1);
 			Point oldLocation = c.getLocation();
@@ -109,14 +111,12 @@ public class Game {
 		Champion c = getCurrentChampion();
 		if (c==null) return;
 		if (c.getCurrentActionPoints() < 2)
-			throw new NotEnoughResourcesException();
+			throw new NotEnoughResourcesException("You need at least two action point to perform a normal attack");
 
-		boolean disarm = false;
 		for (Effect effect : c.getAppliedEffects())
 			if (effect instanceof Disarm)
-				disarm = true;
-		if (disarm == true)
-			throw new ChampionDisarmedException();
+				throw new ChampionDisarmedException("Can not attack while being disarmed");
+		
 
 		c.setCurrentActionPoints(c.getCurrentActionPoints() - 2);
 		Damageable target = null;
@@ -164,7 +164,7 @@ public class Game {
 
 			boolean friend = friend(c, ((Champion) target));
 			if (friend)
-				throw new InvalidTargetException();
+				return;
 
 			boolean shield = checkShield(((Champion) target));
 			boolean dodged = false;
@@ -265,10 +265,10 @@ public class Game {
 		else if (getSecondPlayer().getLeader().equals(c))
 			secondPlayerTeam = true;
 		else
-			throw new LeaderNotCurrentException();
+			throw new LeaderNotCurrentException("The current champion is not a leader");
 
 		if ((firstPlayerTeam && isFirstLeaderAbilityUsed()) || (secondPlayerTeam && isSecondLeaderAbilityUsed()))
-			throw new LeaderAbilityAlreadyUsedException();
+			throw new LeaderAbilityAlreadyUsedException("This leader already used his ability");
 
 		for (Effect effect : c.getAppliedEffects()) {
 			if (effect instanceof Silence)
@@ -393,15 +393,18 @@ public class Game {
 		int mana = c.getMana() - a.getManaCost();
 
 		if (a.getCurrentCooldown() != 0)
-			throw new AbilityUseException();
+			throw new AbilityUseException("You can not use an ability while it is in cooldown");
 
-		if (actionPoints < 0 || mana < 0)
-			throw new NotEnoughResourcesException();
-
+		if (mana < 0 )
+			throw new NotEnoughResourcesException("you need at least " + a.getManaCost() + " mana to cast this ability");
+		else if ( actionPoints < 0)
+			throw new NotEnoughResourcesException("you need at least " + a.getRequiredActionPoints() + " action points to cast this ability");
+		
 		for (Effect effect : c.getAppliedEffects()) {
 			if (effect instanceof Silence)
-				throw new AbilityUseException();
+				throw new AbilityUseException("You can not cast an ability while being silenced");
 		}
+
 
 		c.setCurrentActionPoints(actionPoints);
 		c.setMana(mana);
@@ -525,31 +528,27 @@ public class Game {
 		int mana = c.getMana() - a.getManaCost();
 
 		if (a.getCurrentCooldown() != 0)
-			throw new AbilityUseException();
+			throw new AbilityUseException("You can not use an ability while it is in cooldown");
 
-		if (actionPoints < 0 || mana < 0)
-			throw new NotEnoughResourcesException();
-
+		if (mana < 0 )
+			throw new NotEnoughResourcesException("you need at least " + a.getManaCost() + " mana to cast this ability");
+		else if ( actionPoints < 0)
+			throw new NotEnoughResourcesException("you need at least " + a.getRequiredActionPoints() + " action points to cast this ability");
+		
 		for (Effect effect : c.getAppliedEffects()) {
 			if (effect instanceof Silence)
-				throw new AbilityUseException();
+				throw new AbilityUseException("You can not cast an ability while being silenced");
 		}
 
-		if (c.getLocation().x == x && c.getLocation().y == y && a instanceof DamagingAbility)
-			throw new InvalidTargetException();
-		if (c.getLocation().x == x && c.getLocation().y == y && a instanceof CrowdControlAbility
-				&& ((CrowdControlAbility) a).getEffect().getType() == EffectType.DEBUFF)
-			throw new InvalidTargetException();
-	
 		Damageable target = (Damageable) board[x][y];
 
 		int distance = Math.abs(x - c.getLocation().x) + Math.abs(y - c.getLocation().y);
 
 		if (target == null)
-			throw new InvalidTargetException();
+			throw new InvalidTargetException("You can not cast an ability on an empty cell");
 
 		if (distance > a.getCastRange())
-			throw new AbilityUseException();
+			throw new AbilityUseException("Target out of the ability's cast range");
 
 		ArrayList<Damageable> targets = new ArrayList<>();
 		targets.add(target);
@@ -562,7 +561,7 @@ public class Game {
 			
 		}
 		if (target instanceof Cover && !(a instanceof DamagingAbility)) {
-			throw new InvalidTargetException();
+			throw new InvalidTargetException("Covers can only be damaged");
 		}
 		if(target instanceof Champion) {
 			Champion t = (Champion) target;
@@ -582,14 +581,14 @@ public class Game {
 						}
 					}
 				} else {
-					throw new InvalidTargetException();
+					throw new InvalidTargetException("Can not cast damaging ability on friendly targets");
 				}
 			} else if (a instanceof HealingAbility) {
 
 				if (friend) {
 					a.execute(targets);
 				} else {
-					throw new InvalidTargetException();
+					throw new InvalidTargetException("Can not cast healing ability on enemy targets");
 				}
 			} else if (a instanceof CrowdControlAbility) {
 
@@ -597,8 +596,10 @@ public class Game {
 					a.execute(targets);
 				else if (((CrowdControlAbility) a).getEffect().getType() == EffectType.DEBUFF && !friend)
 					a.execute(targets);
-				else
-					throw new InvalidTargetException();
+				else if (((CrowdControlAbility) a).getEffect().getType() == EffectType.DEBUFF && friend)
+					throw new InvalidTargetException("Can not debuff friendly targets");
+				else  if (((CrowdControlAbility) a).getEffect().getType() == EffectType.BUFF && !friend)
+					throw new InvalidTargetException("Can not buff enemy targets");
 			}
 		}
 		c.setCurrentActionPoints(c.getCurrentActionPoints() - a.getRequiredActionPoints());
@@ -653,14 +654,16 @@ public class Game {
 		int mypoints = c.getCurrentActionPoints() - a.getRequiredActionPoints();
 
 		if (a.getCurrentCooldown() != 0)
-			throw new AbilityUseException();
+			throw new AbilityUseException("You can not use an ability while it is in cooldown");
 
-		if (mana < 0 || mypoints < 0)
-			throw new NotEnoughResourcesException();
-
+		if (mana < 0 )
+			throw new NotEnoughResourcesException("you need at least " + a.getManaCost() + " mana to cast this ability");
+		else if ( mypoints < 0)
+			throw new NotEnoughResourcesException("you need at least " + a.getRequiredActionPoints() + " action points to cast this ability");
+		
 		for (Effect effect : c.getAppliedEffects()) {
 			if (effect instanceof Silence)
-				throw new AbilityUseException();
+				throw new AbilityUseException("You can not cast an ability while being silenced");
 		}
 		a.setCurrentCooldown(a.getBaseCooldown());
 		c.setCurrentActionPoints( c.getCurrentActionPoints() - a.getRequiredActionPoints());
