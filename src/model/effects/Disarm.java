@@ -12,7 +12,7 @@ public class Disarm extends Effect {
 		super("Disarm", duration, EffectType.DEBUFF);
 		
 	}
-	
+	@Override
 	public void apply(Champion c) {
 		boolean punsh = false;
 		for (Ability ability : c.getAbilities()) {
@@ -29,7 +29,7 @@ public class Disarm extends Effect {
 		
 	}
 
-	
+	@Override
 	public void remove(Champion c) {
 		boolean punsh = false;
 		for (Effect effect : c.getAppliedEffects()) {

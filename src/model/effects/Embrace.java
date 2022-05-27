@@ -9,7 +9,7 @@ public class Embrace extends Effect {
 		super("Embrace", duration, EffectType.BUFF);
 	}
 
-	
+	@Override
 	public void apply(Champion c) {
 		
 		int newHp =(int) (c.getMaxHP() * 0.2 + c.getCurrentHP());
@@ -25,7 +25,7 @@ public class Embrace extends Effect {
 		
 	}
 
-
+	@Override
 	public void remove(Champion c) {
 
 		int oldSpeed = (int)(c.getSpeed()/1.2);

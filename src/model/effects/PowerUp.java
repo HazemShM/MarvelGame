@@ -12,7 +12,7 @@ public class PowerUp extends Effect {
 		super("PowerUp", duration, EffectType.BUFF);
 		
 	}
-	
+	@Override
 	public void apply(Champion c) {
 		
 		for(Ability ability : c.getAbilities()) {
@@ -31,7 +31,7 @@ public class PowerUp extends Effect {
 		
 	}
 
-	
+	@Override
 	public void remove(Champion c) {
 		
 		for(Ability ability : c.getAbilities()) {

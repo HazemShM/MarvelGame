@@ -9,7 +9,7 @@ public class Stun extends Effect {
 		super("Stun", duration, EffectType.DEBUFF);
 	}
 
-
+	@Override
 	public void apply(Champion c) {
 		
 		c.setCondition(Condition.INACTIVE);
@@ -17,7 +17,7 @@ public class Stun extends Effect {
 		
 	}
 
-	
+	@Override
 	public void remove(Champion c) {
 		int countStun = 0;
 		int countRoot = 0;

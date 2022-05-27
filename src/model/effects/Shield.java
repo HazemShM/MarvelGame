@@ -9,7 +9,7 @@ public class Shield extends Effect {
 		
 	}
 
-
+	@Override
 	public void apply(Champion c) {
 		
 		int newSpeed =(int)(c.getSpeed()*(1.02));
@@ -18,7 +18,7 @@ public class Shield extends Effect {
 		
 	}
 	
-
+	@Override
 	public void remove(Champion c) {
 		
 		int oldSpeed = (int) (c.getSpeed()/1.02 );
