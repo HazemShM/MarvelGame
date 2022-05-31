@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import engine.Game;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
@@ -16,72 +18,54 @@ import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import model.world.Champion;
 
 public class choosechamps {
-Scene stac;	
-Start str;	
-GUI x;
+	
+	static Scene ChampionsScene;
+	static ArrayList<ChampionButton> buttons;
+	static BorderPane main;
+	static GridPane grid;
+	static VBox Choosen; 
+	static Label label ;
+	static ImageView image ;
+	
+	
+	public static void Choose() {
 
-
-	
-public choosechamps(){
-	
-	
-BorderPane main=new BorderPane();	
-VBox names=new VBox();
-//GridPane champs=new GridPane();
-str=new Start();
-
-names.setSpacing(40);
-
-
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-
-
-
-
-
-
-
-
-
-main.setRight(names);
-//main.setLeft(champs);
-stac=new Scene(main,600,600);
-Image image=new Image("marveliano.jpg");
-BackgroundImage ff=new BackgroundImage(image,BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
- Background bGround = new Background(ff);
- main.setBackground(bGround);
-	
-}	
-
-
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+		main = new BorderPane();
+		Choosen = new VBox();
+		grid = new GridPane();
+		ChampionsScene = new Scene(main, 1000, 700, Color.BEIGE);
+		
+		Choosen.setSpacing(40);
+		
+		main.setRight(Choosen);
+		main.setLeft(grid);
+		
+		grid.setMaxSize(4, 4);
+		grid.autosize();
+		grid.setPadding(new Insets(10,10,10,10));
+		grid.setVgap(8);
+		grid.setHgap(8);
+		int y = 0;
+		int x = 0;
+		buttons= new ArrayList<>();
+		for(Champion c : Game.getAvailableChampions()) {
+			ChampionButton b = new ChampionButton(c);
+			b.place(y,x);
+			if(x<3 && y<4) x++;
+			else if(x==3 && y<3) {
+				x=0;
+				y++;
+			}
+			buttons.add(b);
+			grid.getChildren().add(b.championButton);
+		}
+		
+		
+		Main.Stage.setScene(ChampionsScene);
+	}
 
 }

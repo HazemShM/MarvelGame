@@ -1,57 +1,32 @@
 package views;
-import java.io.IOException;
-import java.util.*;
 
+import java.io.IOException;
+
+import java.util.*;
 import engine.Game;
 import engine.Player;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-public class Controller   {
-static GUI x;
-static Game game;
-static Player first;
-static Player second;
-static Stage stage;
+
+import views.Main;
 
 
-
-
-
-
-
+public class Controller {
 	
-	public static void startchamps(String s1, String s2) throws IOException  {
-		first=new Player(s1);
-		second=new Player(s2);
-		game=new Game(first,second);
-		game.loadChampions("Champions.csv");
+	Game game;
+	Player PlayerOne;
+	Player PlayerTwo;
+
+
+	public Controller(String s1, String s2) throws IOException {
+		PlayerOne = new Player(s1);
+		PlayerTwo = new Player(s2);
+		game = new Game(PlayerOne, PlayerTwo);
 		game.loadAbilities("Abilities.csv");
-	
+		game.loadChampions("Champions.csv");
 		
+
 	}
-		
-		
-		
-		
-		
-		
-		
-		
-	
-
-
-
-
-
-
-	
-	
-	
-	
-	
-	
-
-	
 
 }
