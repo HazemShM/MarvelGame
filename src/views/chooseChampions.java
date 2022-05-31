@@ -26,7 +26,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import model.world.Champion;
 
-public class choosechamps {
+public class chooseChampions {
 	
 	static Scene ChampionsScene;
 	static ArrayList<ChampionButton> buttons;
@@ -36,55 +36,74 @@ public class choosechamps {
 	static Label label ;
 	static ImageView image ;
 	static int numberOfChampions;
-	static Player player ;
-	static int whichPlayer;
-	public static void Choose(Player p) {
-		player =p;
+	
+	
+	
+	static Button chooseLeaderButton;
+
+	static Button next;
+	
+	public static void chooseChampionsScene() {
 		main = new BorderPane();
 		Choosen = new VBox();
 		grid = new GridPane();
+		HBox hbox = new HBox();
 		
 
-		Label nameLabel = new Label("Player: "+p.getName());
-		nameLabel.setFont(Font.font("Aguda", FontWeight.EXTRA_BOLD, 35));
+
+		Label nameLabel = new Label("Player: "+ Controller.currentPlayer.getName());
+		nameLabel.setFont(Font.font("Aguda", FontWeight.EXTRA_BOLD, 25));
 		nameLabel.setTranslateX(50);
 		
-		ChampionsScene = new Scene(main, 1000, 700, Color.BEIGE);
+		ChampionsScene = new Scene(main, 1200, 720, Color.BEIGE);
 		numberOfChampions =0;
 		Choosen.setSpacing(40);
 		
 		main.setRight(Choosen);
 		main.setLeft(grid);
 		main.setTop(nameLabel);
+		main.setBottom(hbox);
 		
-		grid.setMaxSize(4, 4);
+		grid.setMaxSize(4, 2);
 		grid.autosize();
 		grid.setPadding(new Insets(10,10,10,10));
 		grid.setVgap(8);
 		grid.setHgap(8);
 		
-		
+		//4x4 -> 5x3
 		int y = 0;
 		int x = 0;
 		buttons= new ArrayList<>();
 		for(Champion c : Game.getAvailableChampions()) {
 			ChampionButton b = new ChampionButton(c);
-			b.place(y,x);
-			if(x<3 && y<4) x++;
-			else if(x==3 && y<3) {
+			b.place(x,y);
+			if(x<4 && y<3) x++;
+			else if(x==4 && y<2) {
 				x=0;
 				y++;
 			}
 			buttons.add(b);
 			grid.getChildren().add(b.championButton);
 		}
-		if(whichPlayer==2) {
-			for(ChampionButton button : buttons) {
+		if(Controller.currentPlayer.equals(PlayersNames.controller.PlayerTwo)) {
+			for(ChampionButton button : chooseChampions.buttons) {
 				if(PlayersNames.controller.PlayerOne.getTeam().contains(button.champion))
 					button.championButton.setDisable(true);
 			}
 		}
+		chooseLeaderButton = new Button("Choose Leader");
+		chooseLeaderButton.setMaxSize(300, 100);
 		
+		chooseLeaderButton.setFont(Font.font("Aguda", FontWeight.EXTRA_BOLD, 35));
+		GridPane.setConstraints(chooseLeaderButton,1,3,2,1);
+		chooseLeaderButton.setDisable(true);
+		
+		leaderScene.leaderPressed=false;
+		chooseChampions.chooseLeaderButton.setOnAction(e ->{
+
+			leaderScene.leader();
+		});
+		grid.getChildren().add(chooseLeaderButton);
 		
 		Main.Stage.setScene(ChampionsScene);
 	}

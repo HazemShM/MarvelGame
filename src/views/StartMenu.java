@@ -43,15 +43,10 @@ public class StartMenu {
 		startScene = new Scene(b, 1000, 600);
 
 		startButton = new Button("Multiplayer");
-		startButton.setOnAction(e -> {
-			PlayersNames.playersNames();
-			
-		});
+		startButton.setOnAction(e -> Controller.control());
 		
 		exitButton = new Button("Exit");
-		exitButton.setOnAction(e -> {
-			Main.Stage.close();
-		});
+		exitButton.setOnAction(e -> Main.Stage.close());
 		
 		
 		startButton.setFont(Font.font("Aguda", FontWeight.EXTRA_BOLD, 35));
