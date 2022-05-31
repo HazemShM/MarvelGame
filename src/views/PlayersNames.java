@@ -35,8 +35,8 @@ public class PlayersNames {
 	static TextField p1,p2;
 	static Scene playersNames;
 	public static Controller controller;
-	static Button Next;
-	public static void playersNames() {
+	
+	public static void playersNamesScene() {
 
 		VBox root = new VBox();
 		root.setAlignment(Pos.CENTER);
@@ -53,6 +53,10 @@ public class PlayersNames {
 		
 		p2.setAlignment(Pos.CENTER);
 		p2.setPromptText("please enter your name");
+		
+		p1.setText("Player one");
+		p2.setText("Player two");
+		
 		p1.setMaxWidth(400);
 		p1.setMaxHeight(400);
 		p2.setMaxHeight(400);
@@ -72,37 +76,15 @@ public class PlayersNames {
 		s.setTextFill(Color.RED);
 		start.setFont(Font.font("Aguda", FontWeight.EXTRA_BOLD, 35));
 
-		
-		start.setOnAction(e -> {
-			if(!p1.getText().equals("") && !p2.getText().equals("")) {
-				try {
-					controller = new Controller(p1.getText(), p2.getText());
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				choosechamps.whichPlayer=1;
-				choosechamps.Choose(controller.PlayerOne);
-				
-				Next = new Button("Next");
-				Next.setMaxSize(300, 100);
-				Next.setFont(Font.font("Aguda", FontWeight.EXTRA_BOLD, 35));
-				GridPane.setConstraints(Next,3,3);
-				Next.setDisable(true);
-				choosechamps.grid.getChildren().add(Next);
-				Next.setOnAction(a -> {
-					choosechamps.whichPlayer=2;
-					choosechamps.Choose(controller.PlayerTwo);
-				});
-			}
-				
-				
-				
-	});
-
 		root.getChildren().addAll(f, p1, s, p2, start);
 		Main.Stage.setScene(playersNames);
 	}
+	
 
-
+	
 }
+
+
+
+
+

@@ -1,12 +1,15 @@
 package views;
 
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
+import javafx.scene.effect.InnerShadow;
+import javafx.scene.image.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import model.abilities.Ability;
+import javafx.scene.paint.Color;
+import javafx.scene.text.*;
 import model.abilities.*;
 import model.world.Champion;
 
@@ -15,46 +18,65 @@ public class ChampionButton {
 	Champion champion;
 	Boolean pressed; 
 	Image img;
-	public ChampionButton(Champion c){
+
+	public ChampionButton(Champion c) {
 		champion =c;
-		championButton = new Button();
+		championButton = new Button(c.getName());
 		championButton.setMaxSize(150, 150);
-		
+		//championButton.setStyle("-fx-base: coral;");
+
 		String name = "/resources/"+c.getName()+".png";
 		img = new Image(name);
 		ImageView view = new ImageView(img);
 		championButton.setGraphic(view);
+		championButton.setContentDisplay(ContentDisplay.TOP);
+		
+		championButton.setStyle("-fx-background-color: White; ");
+		InnerShadow is = new InnerShadow();
 
+		championButton.setEffect(is);
+		championButton.setTextFill(Color.BLACK);
+		championButton.setFont(Font.font(null, FontWeight.BOLD, 15));
 		pressed = false;
-		championButton.setOnAction(e ->{
-			choosechamps.Choosen.getChildren().remove(choosechamps.label);
-			choosechamps.label = new Label();
-			choosechamps.label.setText(getInfo());
-			choosechamps.Choosen.getChildren().addAll( choosechamps.label);
 
-			if (!pressed && choosechamps.numberOfChampions <=2) {
-				championButton.setStyle("-fx-background-color: Green; ");
-				pressed = true;
-				choosechamps.numberOfChampions++;
-				choosechamps.player.getTeam().add(c);
-				if (choosechamps.numberOfChampions ==3)
-					PlayersNames.Next.setDisable(false);
-			}else if(pressed) {
-				if (choosechamps.numberOfChampions ==3)
-					PlayersNames.Next.setDisable(true);
-				championButton.setStyle(null);
-				pressed = false;
-				choosechamps.numberOfChampions--;
-				choosechamps.player.getTeam().remove(c);
-				
-			}
-			
-			
-			
-		});
+		championButton.setOnAction(e ->handle());
 
 	}
-	
+	public void handle() {
+		chooseChampions.Choosen.getChildren().remove(chooseChampions.label);
+		chooseChampions.label = new Label();
+		chooseChampions.label.setText(getInfo());
+		
+		chooseChampions.Choosen.getChildren().addAll( chooseChampions.label);
+		chooseChampions.Choosen.setPadding(new Insets(0, 50, 0, 0));
+		
+		if (!pressed && chooseChampions.numberOfChampions <=2) {
+			
+			championButton.setStyle("-fx-background-color: Green; ");
+			pressed = true;
+			chooseChampions.numberOfChampions++;
+			Controller.currentPlayer.getTeam().add(champion);
+			
+			if (chooseChampions.numberOfChampions ==3) {
+				
+				chooseChampions.chooseLeaderButton.setDisable(false);
+			}
+
+		}else if(pressed) {
+			if (chooseChampions.numberOfChampions ==3) {
+				
+				chooseChampions.chooseLeaderButton.setDisable(true);
+			}
+				
+			championButton.setStyle("-fx-background-color: White; ");
+			pressed = false;
+			chooseChampions.numberOfChampions--;
+			Controller.currentPlayer.getTeam().remove(champion);
+			
+			
+		}
+		
+	}
 	public void place(int x , int y) {
 		GridPane.setConstraints(championButton,x,y);
 	}
@@ -81,10 +103,10 @@ public class ChampionButton {
 		
 			if(a instanceof CrowdControlAbility) {
 				info+= "		-Type: CrowdControlAbility"  + "\n";
-				info+= "		-Effect:- Name: "+ ((CrowdControlAbility)a).getEffect().getName()+
-						", Duration: " +((CrowdControlAbility)a).getEffect().getDuration() + 
-						" EffectType: "+((CrowdControlAbility)a).getEffect().getType()  + "\n";
-				
+				info+= "		-Effect: Name: "+ ((CrowdControlAbility)a).getEffect().getName() + "\n";
+				info+= "				 Duration: " +((CrowdControlAbility)a).getEffect().getDuration() + "\n";
+				info+= "				 EffectType: "+((CrowdControlAbility)a).getEffect().getType()  + "\n";
+
 			}else if(a instanceof DamagingAbility) {
 				info+= "		-Type: DamagingAbility"  + "\n";
 				info+= "		-Damage Ammount: " + ((DamagingAbility)a).getDamageAmount()  + "\n";
