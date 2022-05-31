@@ -30,7 +30,7 @@ public class choosechamps {
 	static VBox Choosen; 
 	static Label label ;
 	static ImageView image ;
-	
+	static int numberOfChampions;
 	
 	public static void Choose() {
 
@@ -38,7 +38,7 @@ public class choosechamps {
 		Choosen = new VBox();
 		grid = new GridPane();
 		ChampionsScene = new Scene(main, 1000, 700, Color.BEIGE);
-		
+		numberOfChampions =0;
 		Choosen.setSpacing(40);
 		
 		main.setRight(Choosen);

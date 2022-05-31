@@ -31,6 +31,18 @@ public class ChampionButton {
 			choosechamps.label = new Label();
 			choosechamps.label.setText(getInfo());
 			choosechamps.Choosen.getChildren().addAll( choosechamps.label);
+
+			if (!pressed && choosechamps.numberOfChampions <=2) {
+				championButton.setStyle("-fx-background-color: Green; ");
+				pressed = true;
+				choosechamps.numberOfChampions++;
+			}else if(pressed) {
+				championButton.setStyle(null);
+				pressed = false;
+				choosechamps.numberOfChampions--;
+			}
+			
+			
 			
 		});
 
