@@ -36,10 +36,17 @@ public class ChampionButton {
 				championButton.setStyle("-fx-background-color: Green; ");
 				pressed = true;
 				choosechamps.numberOfChampions++;
+				choosechamps.player.getTeam().add(c);
+				if (choosechamps.numberOfChampions ==3)
+					PlayersNames.Next.setDisable(false);
 			}else if(pressed) {
+				if (choosechamps.numberOfChampions ==3)
+					PlayersNames.Next.setDisable(true);
 				championButton.setStyle(null);
 				pressed = false;
 				choosechamps.numberOfChampions--;
+				choosechamps.player.getTeam().remove(c);
+				
 			}
 			
 			
