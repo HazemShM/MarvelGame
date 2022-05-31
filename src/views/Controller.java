@@ -64,6 +64,7 @@ public class Controller {
 				if(Controller.currentPlayer == PlayersNames.controller.PlayerOne) {
 					PlayersNames.controller.PlayerOne.setLeader(leaderScene.leader.champion);
 					Controller.currentPlayer = PlayersNames.controller.PlayerTwo;
+					leaderScene.nextButton.setDisable(true);
 					chooseChampions.chooseChampionsScene();	
 				}else{
 					PlayersNames.controller.PlayerOne.setLeader(leaderScene.leader.champion);
