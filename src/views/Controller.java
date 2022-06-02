@@ -27,9 +27,9 @@ public class Controller {
 
 		PlayerOne = new Player(s1);
 		PlayerTwo = new Player(s2);
-		game = new Game(PlayerOne, PlayerTwo);
-		game.loadAbilities("Abilities.csv");
-		game.loadChampions("Champions.csv");
+	
+		Game.loadAbilities("Abilities.csv");
+		Game.loadChampions("Champions.csv");
 
 	}
 
@@ -68,6 +68,7 @@ public class Controller {
 					chooseChampions.chooseChampionsScene();	
 				}else{
 					PlayersNames.controller.PlayerOne.setLeader(leaderScene.leader.champion);
+					PlayersNames.controller.game= new Game(PlayersNames.controller.PlayerOne, PlayersNames.controller.PlayerTwo);
 					PreGame.preGameScene();
 				}
 

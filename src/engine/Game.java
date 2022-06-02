@@ -12,8 +12,8 @@ import model.effects.*;
 import model.world.*;
 
 public class Game {
-	private static ArrayList<Champion> availableChampions;
-	private static ArrayList<Ability> availableAbilities;
+	private static ArrayList<Champion> availableChampions = new ArrayList<Champion>();
+	private static ArrayList<Ability> availableAbilities = new ArrayList<Ability>();;
 	private Player firstPlayer;
 	private Player secondPlayer;
 	private Object[][] board;
@@ -27,8 +27,7 @@ public class Game {
 		firstPlayer = first;
 
 		secondPlayer = second;
-		availableChampions = new ArrayList<Champion>();
-		availableAbilities = new ArrayList<Ability>();
+
 		board = new Object[BOARDWIDTH][BOARDHEIGHT];
 		turnOrder = new PriorityQueue(6);
 		placeChampions();
@@ -130,7 +129,7 @@ public class Game {
 
 			}
 
-		} else if (d == Direction.RIGHT) {
+		}else if (d == Direction.RIGHT) {
 
 			for (int i = c.getLocation().y + 1; i <= 4 && attackRange > 0 && target == null; i++) {
 				attackRange--;
