@@ -58,7 +58,6 @@ public class ChampionButton {
 			Controller.currentPlayer.getTeam().add(champion);
 			
 			if (chooseChampions.numberOfChampions ==3) {
-				
 				chooseChampions.chooseLeaderButton.setDisable(false);
 			}
 
@@ -109,11 +108,11 @@ public class ChampionButton {
 
 			}else if(a instanceof DamagingAbility) {
 				info+= "		-Type: DamagingAbility"  + "\n";
-				info+= "		-Damage Ammount: " + ((DamagingAbility)a).getDamageAmount()  + "\n";
+				info+= "		-Damage Amount: " + ((DamagingAbility)a).getDamageAmount()  + "\n";
 				
 			}else if(a instanceof HealingAbility) {
 				info+= "		-Type: HealingAbility"  + "\n";
-				info+= "		-Heal Ammount: "+((HealingAbility) a).getHealAmount() + "\n";
+				info+= "		-Heal Amount: "+((HealingAbility) a).getHealAmount() + "\n";
 				
 			}
 			c++;

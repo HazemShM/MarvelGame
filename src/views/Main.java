@@ -1,18 +1,27 @@
 package views;
 
-
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
+
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 
 
 
 public class Main extends Application {
 	
 	public static Stage Stage;
-	
+	public static MediaPlayer mediaPlayer;
 	@Override
 	public void start(Stage s) {
+		
+		Media sound = new Media(getClass().getResource("/resources/sound.mp3").toExternalForm());
+		mediaPlayer = new MediaPlayer(sound);
+		mediaPlayer.setAutoPlay(true);
+		mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+		mediaPlayer.play();
+		
 		Stage = s;
 		
 		Stage.setTitle("Marveliano");

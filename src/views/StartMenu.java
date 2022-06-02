@@ -35,9 +35,10 @@ public class StartMenu {
 	    
 	    view.setPreserveRatio(true);
 	    label.setGraphic(view);
+	    label.setGraphic(null);
 		label.setAlignment(Pos.TOP_CENTER);
 		label.setMaxSize(400, 400);
-		
+
 		//
 		VBox b = new VBox();
 		startScene = new Scene(b, 1000, 600);
@@ -47,8 +48,7 @@ public class StartMenu {
 		
 		exitButton = new Button("Exit");
 		exitButton.setOnAction(e -> Main.Stage.close());
-		
-		
+
 		startButton.setFont(Font.font("Aguda", FontWeight.EXTRA_BOLD, 35));
 		exitButton.setFont(Font.font("Aguda", FontWeight.EXTRA_BOLD, 35));
 
