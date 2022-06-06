@@ -16,19 +16,19 @@ public class Main extends Application {
 	@Override
 	public void start(Stage s) {
 		
-		Media sound = new Media(getClass().getResource("/resources/sound.mp3").toExternalForm());
+		Media sound = new Media(getClass().getResource("/resources/sound2.mpeg").toExternalForm());
 		mediaPlayer = new MediaPlayer(sound);
 		mediaPlayer.setAutoPlay(true);
 		mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
 		mediaPlayer.play();
 		
 		Stage = s;
-		
+		Stage.setResizable(false);
 		Stage.setTitle("Marveliano");
 		Stage.getIcons().add(new Image("/resources/marvellogo.png"));
 
 		StartMenu.startMenu();
-		
+	
 		Stage.show();
 
 	}

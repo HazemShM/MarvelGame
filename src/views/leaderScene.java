@@ -19,7 +19,7 @@ import model.world.Champion;
 
 public class leaderScene {
 	
-	static Button nextButton;
+	static StyledButton nextButton;
 	static leaderScene leader;
 	static Boolean leaderPressed; 
 	static Stage leaderWindow ;
@@ -88,7 +88,7 @@ public class leaderScene {
 				x++;
 			}
 		}
-		leaderGrid.getChildren().add(nextButton);
+		leaderGrid.getChildren().add(nextButton.stack);
 		
 		leaderWindow.showAndWait();
 		

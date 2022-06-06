@@ -40,7 +40,7 @@ public class ChampionButton {
 		pressed = false;
 
 		championButton.setOnAction(e ->handle());
-
+		
 	}
 	public void handle() {
 		chooseChampions.Choosen.getChildren().remove(chooseChampions.label);

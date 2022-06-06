@@ -542,12 +542,14 @@ public class Game {
 		Damageable target = (Damageable) board[x][y];
 
 		int distance = Math.abs(x - c.getLocation().x) + Math.abs(y - c.getLocation().y);
-
+		
+		if (distance > a.getCastRange())
+			throw new AbilityUseException("Target out of the ability's cast range");
+		
 		if (target == null)
 			throw new InvalidTargetException("You can not cast an ability on an empty cell");
 
-		if (distance > a.getCastRange())
-			throw new AbilityUseException("Target out of the ability's cast range");
+		
 
 		ArrayList<Damageable> targets = new ArrayList<>();
 		targets.add(target);

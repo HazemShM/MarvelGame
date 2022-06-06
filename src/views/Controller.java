@@ -7,7 +7,9 @@ import java.util.*;
 import engine.Game;
 import engine.Player;
 import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
@@ -36,7 +38,8 @@ public class Controller {
 	public static void control() {
 		
 		PlayersNames.playersNamesScene();
-		PlayersNames.start.setOnAction(e -> controlHelper());
+		PlayersNames.start.setOnMouseClicked(e -> controlHelper());
+		
 
 	}
 
@@ -52,13 +55,11 @@ public class Controller {
 			Controller.currentPlayer = PlayersNames.controller.PlayerOne;
 			chooseChampions.chooseChampionsScene();
 			
-			leaderScene.nextButton = new Button("Next");
-			leaderScene.nextButton.setMaxSize(300, 100);
-			leaderScene.nextButton.setFont(Font.font("Aguda", FontWeight.EXTRA_BOLD, 35));
-			GridPane.setConstraints(leaderScene.nextButton,1,1);
+			leaderScene.nextButton = new StyledButton("Next",1);
+			GridPane.setConstraints(leaderScene.nextButton.stack,0,1,3,3);
 			leaderScene.nextButton.setDisable(true);
 			
-			leaderScene.nextButton.setOnAction(e ->{
+			leaderScene.nextButton.setOnMouseClicked ( e ->{
 	
 				leaderScene.leaderWindow.close();
 				if(Controller.currentPlayer == PlayersNames.controller.PlayerOne) {
@@ -67,15 +68,15 @@ public class Controller {
 					leaderScene.nextButton.setDisable(true);
 					chooseChampions.chooseChampionsScene();	
 				}else{
-					PlayersNames.controller.PlayerOne.setLeader(leaderScene.leader.champion);
+					PlayersNames.controller.PlayerTwo.setLeader(leaderScene.leader.champion);
 					PlayersNames.controller.game= new Game(PlayersNames.controller.PlayerOne, PlayersNames.controller.PlayerTwo);
-					PreGame.preGameScene();
+					GameBoard gameBoard = new GameBoard();
+					gameBoard.GameScene();
 				}
 
 			});
-
-
-		}
+			
 
 	}
-}
+	
+	}}
