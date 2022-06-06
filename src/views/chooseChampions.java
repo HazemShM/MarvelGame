@@ -39,9 +39,9 @@ public class chooseChampions {
 	
 	
 	
-	static Button chooseLeaderButton;
+	static StyledButton chooseLeaderButton;
 
-	static Button next;
+	static StyledButton next;
 	
 	public static void chooseChampionsScene() {
 		main = new BorderPane();
@@ -91,20 +91,15 @@ public class chooseChampions {
 					button.championButton.setDisable(true);
 			}
 		}
-		chooseLeaderButton = new Button("Choose Leader");
-		chooseLeaderButton.setMaxSize(300, 100);
+		chooseLeaderButton = new StyledButton("Set Leader",3);
 		
-		chooseLeaderButton.setFont(Font.font("Aguda", FontWeight.EXTRA_BOLD, 35));
-		GridPane.setConstraints(chooseLeaderButton,1,3,2,1);
-		chooseLeaderButton.setDisable(true);
+		GridPane.setConstraints(chooseLeaderButton.stack,1,3,3,1);
+		
 		
 		leaderScene.leaderPressed=false;
-		chooseChampions.chooseLeaderButton.setOnAction(e ->{
-
-			leaderScene.leader();
-		});
-		grid.getChildren().add(chooseLeaderButton);
-		
+		chooseChampions.chooseLeaderButton.setOnMouseClicked(e ->leaderScene.leader());
+		grid.getChildren().add(chooseLeaderButton.stack);
+		chooseLeaderButton.setDisable(true);
 		Main.Stage.setScene(ChampionsScene);
 	}
 

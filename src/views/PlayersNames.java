@@ -30,8 +30,7 @@ import javafx.stage.Stage;
 import views.Main;
 
 public class PlayersNames {
-
-	static Button start;
+	static StyledButton start;
 	static TextField p1,p2;
 	static Scene playersNames;
 	public static Controller controller;
@@ -40,9 +39,8 @@ public class PlayersNames {
 
 		VBox root = new VBox();
 		root.setAlignment(Pos.CENTER);
-		playersNames = new Scene(root, 1000, 600, Color.BEIGE);
-		start = new Button("start");
-		start.setFont(Font.font("Aguda", 15));
+		playersNames = new Scene(root, 1200, 720, Color.BEIGE);
+		start = new StyledButton("START",1);
 
 		p1 = new TextField();
 		p1.setPromptText("please enter your name");
@@ -62,7 +60,7 @@ public class PlayersNames {
 		p2.setMaxHeight(400);
 		p2.setMaxWidth(400);
 		root.setSpacing(30);
-		start.setMaxSize(200, 100);
+
 		p1.setFont(Font.font("Aguda", 15));
 		p2.setFont(Font.font("Aguda", 15));
 		f.setFont(Font.font("Aguda", FontWeight.EXTRA_BOLD, 35));
@@ -74,9 +72,9 @@ public class PlayersNames {
 		root.setBackground(bGround);
 		f.setTextFill(Color.RED);
 		s.setTextFill(Color.RED);
-		start.setFont(Font.font("Aguda", FontWeight.EXTRA_BOLD, 35));
 
-		root.getChildren().addAll(f, p1, s, p2, start);
+		
+		root.getChildren().addAll(f, p1, s, p2, start.stack);
 		Main.Stage.setScene(playersNames);
 	}
 	
