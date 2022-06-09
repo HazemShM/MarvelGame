@@ -70,8 +70,10 @@ public class LayoutAnimator implements ChangeListener<Number>, ListChangeListene
 			}
 			d = true;
 			tx.setFromX(tx.getTranslateX() - delta);
-			if(node!=null && node.getId()!=null && !GameBoard.move)
+			if(node!=null && node.getId()!=null && GameBoard.move) {
 				changeImage(((Label) node), tx, delta, d);
+			}
+				
 			tx.playFromStart();
 			break;
 
@@ -83,8 +85,10 @@ public class LayoutAnimator implements ChangeListener<Number>, ListChangeListene
 			}
 			d = false;
 			ty.setFromY(ty.getTranslateY() - delta);
-			if(node!=null && node.getId()!=null && !GameBoard.move)
+			if(node!=null && node.getId()!=null && GameBoard.move) {
 				changeImage(((Label) node), ty, delta, d);
+			}
+				
 			ty.playFromStart();
 		}
 	}
@@ -134,7 +138,7 @@ public class LayoutAnimator implements ChangeListener<Number>, ListChangeListene
 		}
 		t.setOnFinished(e -> {
 			((ImageView) label.getGraphic()).setImage(view);
-			GameBoard.move = true;
+			GameBoard.move =false;
 		});
 
 	}

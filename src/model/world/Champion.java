@@ -22,6 +22,7 @@ public abstract class Champion implements Damageable , Comparable{
 	private Condition condition;
 	private Point location;
 	
+	public int maxMana ;
 
 	public Champion(String name, int maxHP, int mana, int actions, int speed, int attackRange, int attackDamage) {
 		this.name = name;
@@ -36,6 +37,8 @@ public abstract class Champion implements Damageable , Comparable{
 		this.abilities = new ArrayList<Ability>();
 		this.appliedEffects = new ArrayList<Effect>();
 		this.currentActionPoints=maxActionPointsPerTurn;
+		
+		maxMana=mana;
 	}
 	
 	public int compareTo(Object o) {
