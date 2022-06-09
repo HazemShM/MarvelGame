@@ -38,7 +38,7 @@ public class Controller {
 	public static void control() {
 		
 		PlayersNames.playersNamesScene();
-		PlayersNames.start.setOnMouseClicked(e -> controlHelper());
+		PlayersNames.start.setOnAction(e -> controlHelper());
 		
 
 	}
@@ -53,20 +53,21 @@ public class Controller {
 			}
 
 			Controller.currentPlayer = PlayersNames.controller.PlayerOne;
-			chooseChampions.chooseChampionsScene();
+			chooseChampions choose =new chooseChampions();
+			choose.chooseChampionsScene();
 			
 			leaderScene.nextButton = new StyledButton("Next",1);
-			GridPane.setConstraints(leaderScene.nextButton.stack,0,1,3,3);
+			GridPane.setConstraints(leaderScene.nextButton.stack,0,2,3,3);
 			leaderScene.nextButton.setDisable(true);
 			
-			leaderScene.nextButton.setOnMouseClicked ( e ->{
+			leaderScene.nextButton.setOnAction ( e ->{
 	
 				leaderScene.leaderWindow.close();
 				if(Controller.currentPlayer == PlayersNames.controller.PlayerOne) {
 					PlayersNames.controller.PlayerOne.setLeader(leaderScene.leader.champion);
 					Controller.currentPlayer = PlayersNames.controller.PlayerTwo;
 					leaderScene.nextButton.setDisable(true);
-					chooseChampions.chooseChampionsScene();	
+					choose.chooseChampionsScene();	
 				}else{
 					PlayersNames.controller.PlayerTwo.setLeader(leaderScene.leader.champion);
 					PlayersNames.controller.game= new Game(PlayersNames.controller.PlayerOne, PlayersNames.controller.PlayerTwo);

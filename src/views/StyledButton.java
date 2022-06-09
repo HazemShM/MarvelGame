@@ -5,6 +5,7 @@ import java.io.File;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventType;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.effect.Blend;
@@ -31,6 +32,7 @@ public class StyledButton {
 	ImageView image;
 	Text text;
 	Blend blend;
+	
 	public StyledButton(String s, int style) {
 		Image pImg = new Image("/resources/buttons/button" + style + ".png");
 		image = new ImageView(pImg);
@@ -88,8 +90,8 @@ public class StyledButton {
 			image.setEffect(blend);
 			text.setEffect(blend);
 		});
-
-		text.setTextAlignment(TextAlignment.CENTER);
+		
+		//text.setTextAlignment(TextAlignment.CENTER);
 		//text.setTranslateY(1);
 		text.setOnMouseClicked(e -> {
 			String name = getClass().getResource("/resources/clickSound.mp3").toString();
@@ -98,13 +100,14 @@ public class StyledButton {
 			buzzer.setRate(3);
 		});
 		if (style == 2)
-			text.setFill(Color.STEELBLUE);
+			text.setFill(Color.BLACK);
 		else {
 			text.setFill(Color.WHITE);
 		}
 		stack = new StackPane();
-		stack.setPrefHeight(100);
-		stack.setPrefWidth(300);
+		//stack.setPrefHeight(100);
+		//stack.setPrefWidth(300);
+		//stack.setAlignment(Pos.CENTER);
 		stack.getChildren().add(image);
 		stack.getChildren().add(text);
 
@@ -124,7 +127,7 @@ public class StyledButton {
 
 	}
 
-	public <E extends Event> void setOnMouseClicked(EventHandler<E> handler) {
+	public <E extends Event> void setOnAction(EventHandler<E> handler) {
 		@SuppressWarnings("unchecked")
 		EventType<E> eventType = (EventType<E>) MouseEvent.MOUSE_CLICKED;
 

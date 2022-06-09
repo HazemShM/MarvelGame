@@ -45,6 +45,6 @@ public class Winner {
 
 		b.getChildren().addAll(label);
 
-		Main.Stage.setScene(winnerScene);
+		Main.swapScenes(b);
 	}
 }
