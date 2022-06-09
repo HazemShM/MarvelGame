@@ -7,6 +7,7 @@ import engine.Game;
 import engine.Player;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -26,20 +27,25 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import views.Main;
 
 public class PlayersNames {
 	static StyledButton start;
 	static TextField p1,p2;
-	static Scene playersNames;
+	//static Scene playersNames;
 	public static Controller controller;
 	
 	public static void playersNamesScene() {
-
+		Rectangle2D screenSize = Screen.getPrimary().getVisualBounds();
+		
 		VBox root = new VBox();
+		Main.swapScenes(root);
 		root.setAlignment(Pos.CENTER);
-		playersNames = new Scene(root, 1200, 720, Color.BEIGE);
+		//playersNames = new Scene(root, screenSize.getWidth(), screenSize.getHeight());
+		
+
 		start = new StyledButton("START",1);
 
 		p1 = new TextField();
@@ -66,16 +72,26 @@ public class PlayersNames {
 		f.setFont(Font.font("Aguda", FontWeight.EXTRA_BOLD, 35));
 		s.setFont(Font.font("Aguda", FontWeight.EXTRA_BOLD, 35));
 		
-		Image image = new Image("/resources/marvel3.jpg");
-		BackgroundImage ff = new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
-		Background bGround = new Background(ff);
-		root.setBackground(bGround);
+		root.setStyle(
+	            "-fx-background-image: url(" +
+	                "/resources/marvel3.jpg" +
+	            "); " +
+	            "-fx-background-size: cover;"
+	        );
+//		
+//		Image image = new Image("/resources/marvel3.jpg");
+//		BackgroundImage ff = new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
+//		Background bGround = new Background(ff);
+//		root.setBackground(bGround);
 		f.setTextFill(Color.RED);
 		s.setTextFill(Color.RED);
 
 		
 		root.getChildren().addAll(f, p1, s, p2, start.stack);
-		Main.Stage.setScene(playersNames);
+		
+		//Main.Stage.setScene(playersNames);
+		
+		
 	}
 	
 

@@ -1,20 +1,18 @@
 package views;
 
-import javafx.animation.TranslateTransition;
+import javafx.animation.Transition;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
+import javafx.beans.value.*;
+import javafx.collections.*;
+import javafx.event.*;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.transform.Translate;
 import javafx.util.Duration;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Animates an object when its position is changed. For instance, when
@@ -24,8 +22,8 @@ import java.util.Map;
  */
 public class LayoutAnimator implements ChangeListener<Number>, ListChangeListener<Node> {
 
-	private Map<Node, TranslateTransition> nodeXTransitions = new HashMap<>();
-	private Map<Node, TranslateTransition> nodeYTransitions = new HashMap<>();
+	private Map<Node, MoveXTransition> nodeXTransitions = new HashMap<>();
+	private Map<Node, MoveYTransition> nodeYTransitions = new HashMap<>();
 
 	/**
 	 * Animates all the children of a Region. <code>
@@ -56,75 +54,148 @@ public class LayoutAnimator implements ChangeListener<Number>, ListChangeListene
 		n.layoutXProperty().removeListener(this);
 		n.layoutYProperty().removeListener(this);
 	}
-	
+
 	@Override
 	public void changed(ObservableValue<? extends Number> ov, Number oldValue, Number newValue) {
 		final double delta = newValue.doubleValue() - oldValue.doubleValue();
 		final DoubleProperty doubleProperty = (DoubleProperty) ov;
 		final Node node = (Node) doubleProperty.getBean();
-		boolean d=false;
-		TranslateTransition t;
+		boolean d = false;
 		switch (doubleProperty.getName()) {
 		case "layoutX":
-			t = nodeXTransitions.get(node);
-			if (t == null) {
-				t = new TranslateTransition(Duration.millis(1200), node);
-				t.setToX(0);
-				nodeXTransitions.put(node, t);
-				
+			MoveXTransition tx = nodeXTransitions.get(node);
+			if (tx == null) {
+				tx = new MoveXTransition(node);
+				nodeXTransitions.put(node, tx);
 			}
-			d=true;
-			t.setFromX(node.getTranslateX() - delta);
-			node.setTranslateX(node.getTranslateX() - delta);
+			d = true;
+			tx.setFromX(tx.getTranslateX() - delta);
+			if(node!=null && node.getId()!=null && !GameBoard.move)
+				changeImage(((Label) node), tx, delta, d);
+			tx.playFromStart();
 			break;
 
 		default: // "layoutY"
-			t = nodeYTransitions.get(node);
-			if (t == null) {
-				t = new TranslateTransition(Duration.millis(1200), node);
-				t.setToY(0);
-				nodeYTransitions.put(node, t);
-				
+			MoveYTransition ty = nodeYTransitions.get(node);
+			if (ty == null) {
+				ty = new MoveYTransition(node);
+				nodeYTransitions.put(node, ty);
 			}
-			d=false;
-			t.setFromY(node.getTranslateY() - delta);
-			node.setTranslateY(node.getTranslateY() - delta);
+			d = false;
+			ty.setFromY(ty.getTranslateY() - delta);
+			if(node!=null && node.getId()!=null && !GameBoard.move)
+				changeImage(((Label) node), ty, delta, d);
+			ty.playFromStart();
 		}
-		changeImage(((Label) node),t,delta,d);
-		
-		t.playFromStart();
 	}
 
-	public void changeImage(Label label,TranslateTransition t , double delta,boolean d) {
-		Image view = ((ImageView)label.getGraphic()).getImage();
-//		
-//		String left = "/resources/animation/"+label.getId()+"MoveL.gif";
-//		String right = "/resources/animation/"+label.getId()+"MoveR.gif";
-//		String up = "/resources/animation/"+label.getId()+"MoveL.gif";
-//		String down = "/resources/animation/"+label.getId()+"MoveR.gif";
-//		
-		String left = "/resources/animation/Captain AmericaMoveL.gif";
-		String right = "/resources/animation/Captain AmericaMoveR.gif";
-		String up = "/resources/animation/SpidermanMoveL.gif";
-		String down = "/resources/animation/SpidermanMoveR.gif";
-		String current;
-		if(delta>0) {
-			if(d) current=right; else current = down;
-			
-			((ImageView)label.getGraphic()).setImage(new Image(this.getClass().getResource(current).toExternalForm()));
-		
+	public void changeImage(Label label, MoveTransition t, double delta, boolean d) {
+		if(label.getId()==null) return;
+		String left ;
+		String right;
+		String up ;
+		String down ;
+		if(label.getId()==null) return;
+		if(label.getId().equals("Dr Strange")
+			||label.getId().equals("Electro")
+			||label.getId().equals("Yellow Jacket")) {
+			left = "/resources/animation/"+label.getId()+"MoveL.png";
+			right = "/resources/animation/"+label.getId()+"MoveR.png";
+			up=right; down=left;
+		}else if(label.getId().equals("Hulk")) {
+			left = "/resources/animation/"+label.getId()+"MoveL.gif";
+			right = "/resources/animation/"+label.getId()+"MoveR.gif";
+			up = "/resources/animation/"+label.getId()+"MoveUp.gif";
+			down=up;
 		}else {
-			if(d) current=left; else current =up ;
-
-			((ImageView)label.getGraphic()).setImage(new Image(this.getClass().getResource(current).toExternalForm()));
+			left = "/resources/animation/"+label.getId()+"MoveL.gif";
+			right = "/resources/animation/"+label.getId()+"MoveR.gif";
+			up=right; down=left;
 		}
-		t.setOnFinished(e->{
-			((ImageView)label.getGraphic()).setImage(view);
-			GameBoard.move=true;
+	
+		Image view = ((ImageView) label.getGraphic()).getImage();
+		
+		String current;
+		if (delta > 0) {
+			if (d)
+				current = right;
+			else
+				current = down;
+
+			((ImageView) label.getGraphic()).setImage(new Image(this.getClass().getResource(current).toExternalForm()));
+
+		} else {
+			if (d)
+				current = left;
+			else
+				current = up;
+			
+			((ImageView) label.getGraphic()).setImage(new Image(this.getClass().getResource(current).toExternalForm()));
+		}
+		t.setOnFinished(e -> {
+			((ImageView) label.getGraphic()).setImage(view);
+			GameBoard.move = true;
 		});
-	
-	
+
 	}
+
+	private abstract class MoveTransition extends Transition {
+		private final Duration MOVEMENT_ANIMATION_DURATION = new Duration(1000);
+
+		protected final Translate translate;
+
+		public MoveTransition(final Node node) {
+			setCycleDuration(MOVEMENT_ANIMATION_DURATION);
+			translate = new Translate();
+
+			node.getTransforms().add(translate);
+		}
+
+		public double getTranslateX() {
+			return translate.getX();
+		}
+
+		public double getTranslateY() {
+			return translate.getY();
+		}
+	}
+
+	private class MoveXTransition extends MoveTransition {
+		private double fromX;
+
+		public MoveXTransition(final Node node) {
+			super(node);
+		}
+
+		@Override
+		protected void interpolate(double frac) {
+			translate.setX(fromX * (1 - frac));
+		}
+
+		public void setFromX(double fromX) {
+			translate.setX(fromX);
+			this.fromX = fromX;
+		}
+	}
+
+	private class MoveYTransition extends MoveTransition {
+		private double fromY;
+
+		public MoveYTransition(final Node node) {
+			super(node);
+		}
+
+		@Override
+		protected void interpolate(double frac) {
+			translate.setY(fromY * (1 - frac));
+		}
+
+		public void setFromY(double fromY) {
+			translate.setY(fromY);
+			this.fromY = fromY;
+		}
+	}
+
 	@Override
 	public void onChanged(Change change) {
 		while (change.next()) {
@@ -139,4 +210,8 @@ public class LayoutAnimator implements ChangeListener<Number>, ListChangeListene
 			}
 		}
 	}
+
+	// todo unobserving nodes should cleanup any intermediate transitions they may
+	// have and ensure they are removed from transition cache to prevent memory
+	// leaks.
 }
