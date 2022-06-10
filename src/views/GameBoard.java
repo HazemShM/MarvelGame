@@ -214,7 +214,9 @@ public class GameBoard {
 	}
 
 	public void abilitySound(Ability a) {
-		String name = "/resources/dead.mpeg";
+		if(a.getName().equals("Fully Charged"))
+			return;
+		String name = "/resources/sound/"+a.getName()+".mp3";
 
 		AudioClip buzzer = new AudioClip(getClass().getResource(name).toExternalForm());
 		Timeline timeline = new Timeline(new KeyFrame(Duration.ZERO, evt -> {
@@ -881,7 +883,7 @@ public class GameBoard {
 			labels[x][y] = temp;
 //			gameGrid.getChildren().remove(labels[c.getLocation().x][c.getLocation().y]);
 			GridPane.setConstraints(labels[c.getLocation().x][c.getLocation().y], c.getLocation().y, c.getLocation().x);
-			GridPane.setConstraints(labels[x][y], x, y);
+			GridPane.setConstraints(labels[x][y], y, x);
 			
 //			labels[c.getLocation().x][c.getLocation().y].setOnMouseClicked(e -> {
 //				if (singleTarget == true) {
@@ -944,6 +946,7 @@ public class GameBoard {
 
 		try {
 			game.castAbility(a);
+			abilitySound(a);
 		} catch (AbilityUseException | NotEnoughResourcesException | InvalidTargetException
 				| CloneNotSupportedException e) {
 
@@ -956,6 +959,7 @@ public class GameBoard {
 
 		try {
 			game.castAbility(a, d);
+			abilitySound(a);
 			checkIfDead();
 		} catch (NotEnoughResourcesException | AbilityUseException | InvalidTargetException
 				| CloneNotSupportedException e) {
@@ -991,6 +995,7 @@ public class GameBoard {
 					if (singleTarget == true) {
 						try {
 							game.castAbility(a, x, y);
+							abilitySound(a);
 							updateBars(game.getCurrentChampion());
 							teams();
 							hover();
