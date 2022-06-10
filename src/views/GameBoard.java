@@ -239,6 +239,7 @@ public class GameBoard {
 	
 	public void championDetails(Champion champion, StackPane n, Player p,Popup popup) {
 		popup.getContent().clear();
+		
 		VBox v = new VBox();
 		Label c = new Label();
 		c.setText(champion.getName());
@@ -289,7 +290,10 @@ public class GameBoard {
 				Bounds bnds = n.localToScreen(n.getLayoutBounds());
 				double x = bnds.getMinX() + n.getWidth();
 				double y = bnds.getMinY() - v.getHeight() / 2 + n.getHeight() / 2;
+
 				popup.show(n, x, y);
+
+
 			} else {
 				popup.hide();
 			}
@@ -427,6 +431,7 @@ public class GameBoard {
 		ArrayList<Champion> team;
 		HBox curr;
 		Color color;
+		championDetails(game.getCurrentChampion(),current,((game.getFirstPlayer().getTeam().contains(game.getCurrentChampion())? game.getFirstPlayer() :game.getSecondPlayer())), currpopup);
 		for (int j = 0; j < 2; j++) {
 			boolean flag ;
 			if (j == 0) {
@@ -468,6 +473,8 @@ public class GameBoard {
 					team2.setMaxWidth(300);
 					team1.setAlignment(Pos.BASELINE_LEFT);
 					team2.setAlignment(Pos.BASELINE_LEFT);
+					
+					
 					if (flag) {
 						if(count==0)
 							championDetails(c, main, game.getFirstPlayer(), popup1);
@@ -478,44 +485,47 @@ public class GameBoard {
 						}
 					}else {
 						if(count==0)
-							championDetails(c, main, game.getFirstPlayer(), popup4);
+							championDetails(c, main, game.getSecondPlayer(), popup4);
 						else if (count ==1) {
-							championDetails(c, main, game.getFirstPlayer(), popup5);
+							championDetails(c, main, game.getSecondPlayer(), popup5);
 						}else if(count==2) {
-							championDetails(c, main, game.getFirstPlayer(), popup6);
+							championDetails(c, main, game.getSecondPlayer(), popup6);
 						}
 					}
 					count++;
 					
 				}
 			} else {
+				int count=0;
 				for (int i = 0; i < curr.getChildren().size(); i++) {
 					Node n = curr.getChildren().get(i);
 					boolean found = false;
-					int count=0;
-					for (Champion c : team) {
-						if (c.getName().equals(n.getId()))
+					Champion c=null;
+					for (Champion t : team) {
+						if (t.getName().equals(n.getId())) {
 							found = true;
-						if (flag) {
-							if(count==0)
-								championDetails(c,(StackPane) n, game.getFirstPlayer(), popup1);
-							else if (count ==1) {
-								championDetails(c, (StackPane) n, game.getFirstPlayer(), popup2);
-							}else if(count==2) {
-								championDetails(c, (StackPane) n, game.getFirstPlayer(), popup3);
-							}
-						}else {
-							if(count==0)
-								championDetails(c, (StackPane) n, game.getFirstPlayer(), popup4);
-							else if (count ==1) {
-								championDetails(c, (StackPane) n, game.getFirstPlayer(), popup5);
-							}else if(count==2) {
-								championDetails(c, (StackPane) n, game.getFirstPlayer(), popup6);
-							}
+							c=t;
 						}
-						count++;
 					}
-					
+					if(c!=null && found)
+					if (flag) {
+						if(count==0)
+							championDetails(c,(StackPane) n, game.getFirstPlayer(), popup1);
+						else if (count ==1) {
+							championDetails(c, (StackPane) n, game.getFirstPlayer(), popup2);
+						}else if(count==2) {
+							championDetails(c, (StackPane) n, game.getFirstPlayer(), popup3);
+						}
+					}else {
+						if(count==0)
+							championDetails(c, (StackPane) n, game.getSecondPlayer(), popup4);
+						else if (count ==1) {
+							championDetails(c, (StackPane) n, game.getSecondPlayer(), popup5);
+						}else if(count==2) {
+							championDetails(c, (StackPane) n, game.getSecondPlayer(), popup6);
+						}
+					}
+					count++;
 					if (!found) {
 						curr.getChildren().remove(n);
 						i--;
