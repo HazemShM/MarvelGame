@@ -150,8 +150,9 @@ public class GameBoard {
 		left.setMaxWidth(300);
 		left.setAlignment(Pos.TOP_CENTER);
 		right.setPrefWidth(300);
-		right.setMaxWidth(300);
-		right.setAlignment(Pos.TOP_LEFT);
+		right.setMinWidth(300);
+		//right.setMaxWidth(300);
+		right.setAlignment(Pos.TOP_CENTER);
 //		right.setAlignment(Pos.TOP_CENTER);
 		main.setLeft(left);
 		teams();
@@ -277,8 +278,11 @@ public class GameBoard {
 		champ += "Attack Damage: " + champion.getAttackDamage() + "\n";
 
 		v.getChildren().add(c);
-		v.setStyle("-fx-background-color: transparent;");
-
+		//v.setStyle("-fx-background-color: transparent;");
+		v.setStyle("-fx-background-color: black;");
+		if(popup.equals(currpopup)) {
+			v.setStyle("-fx-background-color: transparent;");
+		}
 		String effects = "";
 		for (model.effects.Effect effect : champion.getAppliedEffects()) {
 			effects += "Currently Applied Effects Are:" + "\n";
@@ -296,10 +300,16 @@ public class GameBoard {
 		n.hoverProperty().addListener((obs, oldVal, newValue) -> {
 			if (newValue) {
 				Bounds bnds = n.localToScreen(n.getLayoutBounds());
-				double x = bnds.getMinX() + n.getWidth();
-				double y = bnds.getMinY() - v.getHeight() / 2 + n.getHeight() / 2;
-
-				popup.show(n, x, y);
+				if(popup.equals(currpopup)) {
+					double x = bnds.getMinX() + n.getWidth();
+					double y = bnds.getMinY() - v.getHeight() / 2 + n.getHeight() / 2;
+					popup.show(n, x, y);
+				}else {
+					double x = bnds.getMinX()-v.getWidth() ;
+					double y = bnds.getMinY() -v.getHeight()/2 +n.getHeight()/2;
+					popup.show(n, x, y);
+				}
+				
 
 
 			} else {
@@ -339,7 +349,7 @@ public class GameBoard {
 			abilitiesInfo.setAlignment(Pos.CENTER);
 			abilitiesInfo.getChildren().add(abilityLabel);
 		}
-		System.out.println(abilitiesInfo.getWidth() + "  " + abilitiesInfo.getHeight());
+
 		if (c.getAbilities().size() > 3 && !(abilitiesInfo.getChildren().size() > 3)) {
 			Label abilityLabel = new Label(abilities.get(4).getName());
 			abilityInfo("T", abilities.get(4), abilityLabel);
@@ -475,13 +485,13 @@ public class GameBoard {
 					main.setPadding(new Insets(8));
 					curr.getChildren().add(main);
 					curr.setPrefWidth(350);
-					curr.setAlignment(Pos.CENTER);
+					curr.setAlignment(Pos.BASELINE_LEFT);
 					team1.setPrefWidth(300);
 					team2.setPrefWidth(300);
-					team1.setMaxWidth(300);
-					team2.setMaxWidth(300);
-					team1.setAlignment(Pos.BASELINE_LEFT);
-					team2.setAlignment(Pos.BASELINE_LEFT);
+					//team1.setMaxWidth(300);
+					//team2.setMaxWidth(300);
+					team1.setAlignment(Pos.CENTER);
+					team2.setAlignment(Pos.CENTER);
 					
 					
 					if (flag) {
@@ -936,7 +946,7 @@ public class GameBoard {
 		if(currChamp.getName().equals("Iceman") || currChamp.getName().equals("Yellow Jacket")) return;
 		
 		String name="/resources/animation/";
-		if (currChamp.getName().equals("Electro") || currChamp.getName().equals("Dr Strange")) {
+		if (currChamp.getName().equals("Electro") || currChamp.getName().equals("Dr Strange") || currChamp.getName().equals("Hela")) {
 			 if(d==Direction.RIGHT || d== Direction.UP)
 					name+=currChamp.getName()+"AttackR.png";
 			else if(d==Direction.LEFT || d== Direction.DOWN)
@@ -953,11 +963,11 @@ public class GameBoard {
 		final String temp =name;
 		attack = new Timeline(
 				new KeyFrame(Duration.ZERO, evt -> ((ImageView) champLabel.getGraphic()).setImage(new Image(this.getClass().getResource(temp).toExternalForm()))),
-				new KeyFrame(Duration.millis(500)),
-				new KeyFrame(Duration.millis(700)));
+				new KeyFrame(Duration.millis(750)));
 		attack.play();
 		attack.setOnFinished(evt -> {
 			((ImageView)champLabel.getGraphic()).setImage(old);
+			space = false;
 		});
 		
 		
@@ -977,8 +987,9 @@ public class GameBoard {
 			// TODO Auto-generated catch block
 
 			errorMessage(e.getLocalizedMessage(), 1);
+			space = false;
 		}
-		space = false;
+		
 
 	}
 	Label leaderAbility1=new Label();
@@ -1011,6 +1022,7 @@ public class GameBoard {
 		try {
 			game.castAbility(a);
 			abilitySound(a);
+			checkIfDead();
 		} catch (AbilityUseException | NotEnoughResourcesException | InvalidTargetException
 				| CloneNotSupportedException e) {
 
@@ -1060,6 +1072,7 @@ public class GameBoard {
 						try {
 							game.castAbility(a, x, y);
 							abilitySound(a);
+							checkIfDead();
 							updateBars(game.getCurrentChampion());
 							teams();
 							hover();
