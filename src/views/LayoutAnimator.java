@@ -106,7 +106,7 @@ public class LayoutAnimator implements ChangeListener<Number>, ListChangeListene
 			left = "/resources/animation/"+label.getId()+"MoveL.png";
 			right = "/resources/animation/"+label.getId()+"MoveR.png";
 			up=right; down=left;
-		}else if(label.getId().equals("Hulk")) {
+		}else if(label.getId().equals("Hulk") || label.getId().equals("Venom") ) {
 			left = "/resources/animation/"+label.getId()+"MoveL.gif";
 			right = "/resources/animation/"+label.getId()+"MoveR.gif";
 			up = "/resources/animation/"+label.getId()+"MoveUp.gif";
