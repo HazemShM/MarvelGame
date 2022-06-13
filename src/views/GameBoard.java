@@ -159,13 +159,19 @@ public class GameBoard {
 		Font font = Font.font(font_name, FontWeight.BOLD, FontPosture.REGULAR, 30);
 		Label player1 = new Label(game.getFirstPlayer().getName());
 		player1.setFont(font);
-		player1.setTextFill(Color.WHITE);
+		player1.setTextFill(Color.AQUA);
 		player1.setStyle("-fx-effect: dropshadow( gaussian , rgba(255,255,255,0.5) , 0,0,0,1 );");
 		Label player2 = new Label(game.getSecondPlayer().getName());
 		player2.setFont(font);
-		player2.setTextFill(Color.WHITE);
+		player2.setTextFill(Color.PALEVIOLETRED);
 		player2.setStyle("-fx-effect: dropshadow( gaussian , rgba(255,255,255,0.5) , 0,0,0,1 );");
-		right.getChildren().addAll(player1, team1, player2, team2);
+		leaderAbility1.setText("Leader Ability Not Used");
+		leaderAbility2.setText("Leader Ability Not Used");
+		leaderAbility1.setFont(Font.font("Aguda", FontWeight.EXTRA_BOLD, 25));
+		leaderAbility2.setFont(Font.font("Aguda", FontWeight.EXTRA_BOLD, 25));
+		leaderAbility1.setTextFill(Color.GREEN);
+		leaderAbility2.setTextFill(Color.GREEN);
+		right.getChildren().addAll(player1, team1,leaderAbility1, player2, team2,leaderAbility2);
 		main.setRight(right);
 		
 		champPlayer.setFont(font);
@@ -428,11 +434,12 @@ public class GameBoard {
 //	}
 	static HBox team1 = new HBox();
 	static HBox team2 = new HBox();
-
+	
 	public void teams() {
 		ArrayList<Champion> team;
 		HBox curr;
 		Color color;
+		updateAbilities(game.getCurrentChampion());
 		championDetails(game.getCurrentChampion(),current,((game.getFirstPlayer().getTeam().contains(game.getCurrentChampion())? game.getFirstPlayer() :game.getSecondPlayer())), currpopup);
 		for (int j = 0; j < 2; j++) {
 			boolean flag ;
@@ -908,12 +915,61 @@ public class GameBoard {
 			errorMessage(e.getLocalizedMessage(), 1);
 		}
 	}
-
+	
+	Timeline attack = new Timeline();
+	Champion currChamp=game.getCurrentChampion();
+	Label champLabel;
+	Image old ;
+	int countTemp=1;
+	public void attackAnimation(Direction d) {
+		if(countTemp==1) {
+			champLabel=labels[currChamp.getLocation().x][currChamp.getLocation().y];
+			old =(Image) ((ImageView)champLabel.getGraphic()).getImage();
+			countTemp++;
+		}	
+		attack.stop();
+		((ImageView)champLabel.getGraphic()).setImage(old);
+		currChamp = game.getCurrentChampion();
+		champLabel=labels[currChamp.getLocation().x][currChamp.getLocation().y];
+		old =(Image) ((ImageView)champLabel.getGraphic()).getImage();
+		
+		if(currChamp.getName().equals("Iceman") || currChamp.getName().equals("Yellow Jacket")) return;
+		
+		String name="/resources/animation/";
+		if (currChamp.getName().equals("Electro") || currChamp.getName().equals("Dr Strange")) {
+			 if(d==Direction.RIGHT || d== Direction.UP)
+					name+=currChamp.getName()+"AttackR.png";
+			else if(d==Direction.LEFT || d== Direction.DOWN)
+					name+=currChamp.getName()+"AttackL.png";
+		}else if(d==Direction.UP && currChamp.getName().equals("Captain America"))
+			name+=currChamp.getName()+"AttackD.gif";
+		else if(d==Direction.DOWN && currChamp.getName().equals("Captain America"))
+			name+=currChamp.getName()+"AttackUp.gif";
+		else if(d==Direction.RIGHT || d== Direction.UP)
+			name+=currChamp.getName()+"AttackR.gif";
+		else if(d==Direction.LEFT || d== Direction.DOWN)
+			name+=currChamp.getName()+"AttackL.gif";
+		
+		final String temp =name;
+		attack = new Timeline(
+				new KeyFrame(Duration.ZERO, evt -> ((ImageView) champLabel.getGraphic()).setImage(new Image(this.getClass().getResource(temp).toExternalForm()))),
+				new KeyFrame(Duration.millis(500)),
+				new KeyFrame(Duration.millis(700)));
+		attack.play();
+		attack.setOnFinished(evt -> {
+			((ImageView)champLabel.getGraphic()).setImage(old);
+		});
+		
+		
+		
+		
+	}
 	public void attack(Direction d) {
 		Champion c = PlayersNames.controller.game.getCurrentChampion();
-
+		
 		try {
 			game.attack(d);
+			attackAnimation(d);
 			checkIfDead();
 
 		} catch (NotEnoughResourcesException | UnallowedMovementException | ChampionDisarmedException
@@ -925,11 +981,19 @@ public class GameBoard {
 		space = false;
 
 	}
-
+	Label leaderAbility1=new Label();
+	Label leaderAbility2=new Label();
 	public void leaderAbility() {
 		Champion c = PlayersNames.controller.game.getCurrentChampion();
 		try {
 			game.useLeaderAbility();
+			if(game.getFirstPlayer().getLeader().equals(game.getCurrentChampion())) {
+				leaderAbility1.setText("Leader Ability Used");
+				leaderAbility1.setTextFill(Color.RED);
+			}else {
+				leaderAbility2.setText("Leader Ability Used");
+				leaderAbility2.setTextFill(Color.RED);
+			}
 			updateBars(game.getCurrentChampion());
 			teams();
 			hover();
