@@ -187,6 +187,7 @@ public class GameBoard {
 
 			System.out.println();
 			game.endTurn();
+			teams();
 			showTurn();
 			updateAbilities(game.getCurrentChampion());
 			updateBars(game.getCurrentChampion());
@@ -388,7 +389,7 @@ public class GameBoard {
 		ability += "	-CurrentCoolDown: " + a.getCurrentCooldown() + "\n";
 		ability += "	-Range: " + a.getCastRange() + "\n";
 		ability += "	-AOE: " + a.getCastArea() + "\n";
-		ability += "	-AtionPoints: " + a.getRequiredActionPoints() + "\n";
+		ability += "	-ActionPoints: " + a.getRequiredActionPoints() + "\n";
 
 		if (a instanceof CrowdControlAbility) {
 			ability += "	-Type: CrowdControl" + "\n";
