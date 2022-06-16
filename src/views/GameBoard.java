@@ -450,6 +450,7 @@ public class GameBoard {
 		ArrayList<Champion> team;
 		HBox curr;
 		Color color;
+		updateTurn();
 		updateAbilities(game.getCurrentChampion());
 		championDetails(game.getCurrentChampion(),current,((game.getFirstPlayer().getTeam().contains(game.getCurrentChampion())? game.getFirstPlayer() :game.getSecondPlayer())), currpopup);
 		for (int j = 0; j < 2; j++) {
@@ -607,7 +608,24 @@ public class GameBoard {
 	// ArrayList<StackPane> circles = new ArrayList<StackPane>();
 	static HBox turnOrderBox = new HBox();
 	static StackPane current = new StackPane();
-
+	public void updateTurn() {
+		for(Champion c : game.getFirstPlayer().getTeam()) {
+			if(c.getCondition()==Condition.INACTIVE) {
+				for(Node s : turnOrderBox.getChildren()) {
+					if(s.getId().equals(c.getName()))
+						turnOrderBox.getChildren().remove(s);
+				}
+			}
+		}
+		for(Champion c : game.getSecondPlayer().getTeam()) {
+			if(c.getCondition()==Condition.INACTIVE) {
+				for(Node s : turnOrderBox.getChildren()) {
+					if(s.getId().equals(c.getName()))
+						turnOrderBox.getChildren().remove(s);
+				}
+			}
+		}
+	}
 	public void showTurn() {
 
 		if (!turnOrderBox.getChildren().isEmpty()) {
@@ -630,6 +648,7 @@ public class GameBoard {
 			current.getChildren().add(f1);
 			current.getChildren().add(f2);
 			current.setPadding(new Insets(8));
+			current.setId(game.getCurrentChampion().getName());
 			Player p;
 			if(game.getFirstPlayer().getTeam().contains(game.getCurrentChampion())) {
 				p=game.getFirstPlayer();
@@ -675,6 +694,7 @@ public class GameBoard {
 				current.getChildren().add(t);
 				current.getChildren().add(image);
 				current.setPadding(new Insets(8));
+				current.setId(game.getCurrentChampion().getName());
 				Player p;
 				if(game.getFirstPlayer().getTeam().contains(game.getCurrentChampion())) {
 					p=game.getFirstPlayer();
@@ -693,9 +713,11 @@ public class GameBoard {
 				image.setPreserveRatio(true);
 				main.getChildren().add(t);
 				main.getChildren().add(image);
+				main.setId(r.getName());
 				turnOrderBox.getChildren().add(main);
 			}
 		}
+		updateTurn();
 
 	}
 
